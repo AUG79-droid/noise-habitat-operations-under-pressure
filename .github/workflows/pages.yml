@@ -1,4 +1,4 @@
-name: Deploy Noise Habitat and Modularity Matrix to GitHub Pages
+name: Deploy static apps to GitHub Pages
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -24,96 +24,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build Modularity Matrix source
+      - name: Prepare Year 15 Challenge
         shell: bash
         run: |
           set -euo pipefail
-          GAME="modularity-matrix"
-          rm -rf "$GAME"
-          mkdir -p "$GAME"
-          cat .modularity_payload/part*.txt > /tmp/modularity_payload.b64
-          base64 -d /tmp/modularity_payload.b64 > /tmp/modularity_payload.tgz
-          tar -xzf /tmp/modularity_payload.tgz -C "$GAME"
-          rm -f /tmp/modularity_payload.b64 /tmp/modularity_payload.tgz
-          test -f "$GAME/index.html"
-          test -f "$GAME/game.js"
-
-      - name: Expose core source immediately for debugging
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add modularity-matrix/index.html modularity-matrix/game.js modularity-matrix/app.css
-          git commit -m "[skip ci] Expose Modularity Matrix core runtime source" || true
-          git push
-
-      - name: Prepare zero-cost game runtime assets
-        shell: bash
-        run: |
-          set -euo pipefail
-          GAME="modularity-matrix"
-          mkdir -p "$GAME/vendor/three/loaders" "$GAME/vendor/three/utils" "$GAME/vendor/quaternius" "$GAME/vendor/factory"
-
-          curl --retry 3 --fail --location \
-            "https://raw.githubusercontent.com/mrdoob/three.js/r180/build/three.module.min.js" \
-            -o "$GAME/vendor/three/three.module.min.js"
-          curl --retry 3 --fail --location \
-            "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/loaders/GLTFLoader.js" \
-            -o "$GAME/vendor/three/loaders/GLTFLoader.js"
-          curl --retry 3 --fail --location \
-            "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/utils/SkeletonUtils.js" \
-            -o "$GAME/vendor/three/utils/SkeletonUtils.js"
-          curl --retry 3 --fail --location \
-            "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/utils/BufferGeometryUtils.js" \
-            -o "$GAME/vendor/three/utils/BufferGeometryUtils.js"
-
-          sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/loaders/GLTFLoader.js"
-          sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/utils/SkeletonUtils.js"
-          sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/utils/BufferGeometryUtils.js"
-
-          if grep -R "from 'three'" "$GAME/vendor/three/loaders" "$GAME/vendor/three/utils"; then
-            echo "Unresolved bare Three.js import remains"
-            exit 1
-          fi
-
-          if ! curl --retry 3 --fail --location \
-            "https://raw.githubusercontent.com/hukasu/bevy-modular-characters/main/assets/SciFi.gltf" \
-            -o "$GAME/vendor/quaternius/SciFi.gltf"; then
-            rm -f "$GAME/vendor/quaternius/SciFi.gltf"
-            echo "Animated character download failed; procedural fallback will be used."
-          fi
-
-          TMP="$(mktemp -d)"
-          if curl --retry 3 --fail --location \
-            "https://kenney.nl/media/pages/assets/factory-kit/edaac9d4f6-1777639602/kenney_factory-kit_3.0.zip" \
-            -o "$TMP/factory.zip"; then
-            unzip -q "$TMP/factory.zip" -d "$TMP/factory"
-            GLTF_DIR="$(find "$TMP/factory" -type d -iname 'GLTF format' -print -quit)"
-            if [ -n "$GLTF_DIR" ]; then
-              cp -a "$GLTF_DIR"/. "$GAME/vendor/factory/"
-            fi
-          else
-            echo "Factory asset download failed; procedural environment will be used."
-          fi
-          python -c "from pathlib import Path; import json; d=Path('$GAME/vendor/factory'); files=sorted(p.relative_to(d).as_posix() for p in d.rglob('*') if p.suffix.lower() in {'.gltf','.glb'}); Path('$GAME/vendor/factory-manifest.json').write_text(json.dumps(files), encoding='utf-8'); print('Factory models available:', len(files))"
-          rm -rf "$TMP"
-
-          test -s "$GAME/vendor/three/three.module.min.js"
-          test -s "$GAME/vendor/three/loaders/GLTFLoader.js"
-          test -s "$GAME/vendor/three/utils/SkeletonUtils.js"
-          test -s "$GAME/vendor/three/utils/BufferGeometryUtils.js"
-          rm -rf .modularity_payload
-
-      - name: Expose exact runtime support files
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p .deployment_status
-          printf 'Modularity Matrix build verified\ncommit=%s\nutc=%s\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .deployment_status/modularity-matrix.txt
-          git add .deployment_status/modularity-matrix.txt modularity-matrix/vendor/three modularity-matrix/vendor/factory-manifest.json
-          git commit -m "[skip ci] Expose Modularity Matrix support runtime source" || true
-          git push
+          rm -rf year-15-challenge
+          unzip -q year-15-challenge.zip
+          test -f year-15-challenge/index.html
+          test -f year-15-challenge/app.css
+          test -f year-15-challenge/app.js
+          rm -f year-15-challenge.zip
+          touch .nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -128,12 +49,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Record successful Pages deployment
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'Modularity Matrix Pages deployment succeeded\nsource_commit=%s\npage_url=%s\nutc=%s\n' "$GITHUB_SHA" "${{ steps.deployment.outputs.page_url }}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .deployment_status/modularity-matrix-pages.txt
-          git add .deployment_status/modularity-matrix-pages.txt
-          git commit -m "[skip ci] Record successful Modularity Matrix Pages deployment" || true
-          git push
