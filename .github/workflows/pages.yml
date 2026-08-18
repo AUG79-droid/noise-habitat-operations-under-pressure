@@ -1,4 +1,4 @@
-name: Deploy Noise Habitat Course to GitHub Pages
+name: Deploy Noise Habitat and Modularity Matrix to GitHub Pages
 
 on:
   push:
@@ -23,14 +23,75 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Build Modularity Matrix source
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="modularity-matrix"
+          rm -rf "$GAME"
+          mkdir -p "$GAME"
+          cat .modularity_payload/part*.txt > /tmp/modularity_payload.b64
+          base64 -d /tmp/modularity_payload.b64 > /tmp/modularity_payload.tgz
+          tar -xzf /tmp/modularity_payload.tgz -C "$GAME"
+          rm -f /tmp/modularity_payload.b64 /tmp/modularity_payload.tgz
+          test -f "$GAME/index.html"
+          test -f "$GAME/game.js"
+
+      - name: Prepare zero-cost game runtime assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          GAME="modularity-matrix"
+          mkdir -p "$GAME/vendor/three/loaders" "$GAME/vendor/three/utils" "$GAME/vendor/quaternius" "$GAME/vendor/factory"
+
+          curl --retry 3 --fail --location \
+            "https://raw.githubusercontent.com/mrdoob/three.js/r180/build/three.module.min.js" \
+            -o "$GAME/vendor/three/three.module.min.js"
+          curl --retry 3 --fail --location \
+            "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/loaders/GLTFLoader.js" \
+            -o "$GAME/vendor/three/loaders/GLTFLoader.js"
+          curl --retry 3 --fail --location \
+            "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/utils/SkeletonUtils.js" \
+            -o "$GAME/vendor/three/utils/SkeletonUtils.js"
+
+          if ! curl --retry 3 --fail --location \
+            "https://raw.githubusercontent.com/hukasu/bevy-modular-characters/main/assets/SciFi.gltf" \
+            -o "$GAME/vendor/quaternius/SciFi.gltf"; then
+            rm -f "$GAME/vendor/quaternius/SciFi.gltf"
+            echo "Animated character download failed; procedural fallback will be used."
+          fi
+
+          TMP="$(mktemp -d)"
+          if curl --retry 3 --fail --location \
+            "https://kenney.nl/media/pages/assets/factory-kit/edaac9d4f6-1777639602/kenney_factory-kit_3.0.zip" \
+            -o "$TMP/factory.zip"; then
+            unzip -q "$TMP/factory.zip" -d "$TMP/factory"
+            GLTF_DIR="$(find "$TMP/factory" -type d -iname 'GLTF format' -print -quit)"
+            if [ -n "$GLTF_DIR" ]; then
+              cp -a "$GLTF_DIR"/. "$GAME/vendor/factory/"
+            fi
+          else
+            echo "Factory asset download failed; procedural environment will be used."
+          fi
+          python -c "from pathlib import Path; import json; d=Path('$GAME/vendor/factory'); files=sorted(p.relative_to(d).as_posix() for p in d.rglob('*') if p.suffix.lower() in {'.gltf','.glb'}); Path('$GAME/vendor/factory-manifest.json').write_text(json.dumps(files), encoding='utf-8'); print('Factory models available:', len(files))"
+          rm -rf "$TMP"
+
+          test -s "$GAME/vendor/three/three.module.min.js"
+          test -s "$GAME/vendor/three/loaders/GLTFLoader.js"
+          test -s "$GAME/vendor/three/utils/SkeletonUtils.js"
+          rm -rf .modularity_payload
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
           path: .
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
