@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -49,3 +49,15 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Record successful Year 15 deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .deployment_status
+          printf 'The Year 15 Challenge deployed successfully\nsource_commit=%s\npage_url=%s\nutc=%s\n' "$GITHUB_SHA" "${{ steps.deployment.outputs.page_url }}year-15-challenge/" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .deployment_status/year-15-challenge.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .deployment_status/year-15-challenge.txt
+          git commit -m "[skip ci] Record successful Year 15 Challenge deployment" || true
+          git push
