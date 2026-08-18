@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>The Modularity Matrix — Factory Run</title>
+<link rel="stylesheet" href="./style.css"/>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="game-shell">
+  <div id="viewport"></div>
+  <header class="hud top"><div class="brand glass"><span class="kicker">ENGINEERING & ECO-DESIGN</span><strong>THE MODULARITY MATRIX</strong><small>Through-life design challenge</small></div><div class="stat glass"><b id="score">0000</b><span>SCORE</span></div><div class="stat glass danger"><b id="debt">0</b><span>DESIGN DEBT</span></div></header>
+  <aside id="mission-card" class="glass"><div class="mission-row"><span id="mission-no">MISSION 01</span><span id="mission-chip">BUILD</span></div><h1 id="mission-title">Build the mission-computing module</h1><p id="mission-text">Collect exactly the three parts in your engineering brief.</p><div id="checklist"></div><div class="why"><b>WHY?</b><span id="why-text">A modular architecture starts by separating functions into replaceable building blocks.</span></div></aside>
+  <div id="tip" class="glass tip"><b id="tip-title">MOVE</b><span id="tip-text">A / D or ← / → to change lane</span></div>
+  <div id="progress-wrap"><div id="progress"></div></div><div id="feedback"></div>
+  <div id="touch"><button id="left">◀</button><button id="right">▶</button></div>
+  <div id="boot" class="modal active"><div class="boot-card glass"><div class="logo-mark"><i></i><i></i><i></i></div><span class="kicker">TACTICAL TRANSPORT · FICTIONAL TRAINING SCENARIO</span><h2>THE MODULARITY<br/>MATRIX</h2><p>Design a mission-computing subsystem that can still be repaired and upgraded fifteen years from now.</p><div class="boot-rule"><div><b>1</b><span>Collect what the brief asks for.</span></div><div><b>2</b><span>Choose interfaces that preserve future options.</span></div><div><b>3</b><span>Face the consequences in YEAR 15.</span></div></div><div id="load-state">Preparing game engine…</div><button id="start" disabled>START ENGINEERING RUN</button></div></div>
+  <div id="lesson" class="modal"><div class="lesson-card glass"><span class="kicker" id="lesson-kicker">MISSION COMPLETE</span><h2 id="lesson-title"></h2><p id="lesson-text"></p><div id="lesson-points"></div><button id="continue">CONTINUE</button></div></div>
+  <div id="finish" class="modal"><div class="lesson-card glass"><span class="kicker">FINAL THROUGH-LIFE REVIEW</span><h2 id="grade"></h2><p id="final-copy"></p><div class="final-grid"><div><b id="f-score">0</b><span>SCORE</span></div><div><b id="f-debt">0</b><span>DESIGN DEBT</span></div><div><b id="f-retro">0</b><span>YEAR-15 MODULES</span></div></div><button onclick="location.reload()">PLAY AGAIN</button></div></div>
+  <div id="fatal" class="fatal"><b>GAME ENGINE COULD NOT START</b><span id="fatal-msg"></span><button onclick="location.reload()">RETRY</button></div>
+</div>
+<script type="module" src="./game.js"></script>
+</body>
+</html>
