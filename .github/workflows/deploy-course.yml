@@ -1,0 +1,36 @@
+name: Publish Noise Habitat Course
+
+on:
+  push:
+    paths:
+      - '.deploy-trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild course package
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat payload/part-* > /tmp/course.b64
+          base64 --decode /tmp/course.b64 > /tmp/course.zip
+          unzip -oq /tmp/course.zip -d .
+          rm -rf payload .deploy-trigger .github/workflows/deploy-course.yml
+
+      - name: Commit published course
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish Noise & Habitat Course Edition v3" || exit 0
+          git push
