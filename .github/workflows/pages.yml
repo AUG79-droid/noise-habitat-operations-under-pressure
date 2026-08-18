@@ -107,3 +107,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Record successful Pages deployment
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'Modularity Matrix Pages deployment succeeded\nsource_commit=%s\npage_url=%s\nutc=%s\n' "$GITHUB_SHA" "${{ steps.deployment.outputs.page_url }}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .deployment_status/modularity-matrix-pages.txt
+          git add .deployment_status/modularity-matrix-pages.txt
+          git commit -m "Record successful Modularity Matrix Pages deployment" || true
+          git push
