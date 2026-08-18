@@ -3,7 +3,7 @@ name: Install Noise Habitat Course v3
 on:
   push:
     paths:
-      - 'course-v3.zip'
+      - 'noise-habitat-MISSIONS01-06-COURSE-v3.zip'
 
 permissions:
   contents: write
@@ -21,9 +21,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          ZIP='noise-habitat-MISSIONS01-06-COURSE-v3.zip'
           rm -rf /tmp/noise-habitat-course
           mkdir -p /tmp/noise-habitat-course
-          unzip -oq course-v3.zip -d /tmp/noise-habitat-course
+          unzip -oq "$ZIP" -d /tmp/noise-habitat-course
           SRC=$(find /tmp/noise-habitat-course -mindepth 1 -maxdepth 1 -type d | head -n 1)
           if [ -z "$SRC" ]; then
             SRC=/tmp/noise-habitat-course
@@ -31,7 +32,7 @@ jobs:
           rm -rf assets payload
           rm -f index.html README.md .deploy-trigger
           cp -a "$SRC"/. .
-          rm -f course-v3.zip
+          rm -f "$ZIP"
           rm -f .github/workflows/deploy-course.yml
 
       - name: Commit installed course
