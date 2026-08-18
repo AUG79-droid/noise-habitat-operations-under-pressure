@@ -38,6 +38,16 @@ jobs:
           test -f "$GAME/index.html"
           test -f "$GAME/game.js"
 
+      - name: Expose core source immediately for debugging
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add modularity-matrix/index.html modularity-matrix/game.js modularity-matrix/app.css
+          git commit -m "[skip ci] Expose Modularity Matrix core runtime source" || true
+          git push
+
       - name: Prepare zero-cost game runtime assets
         shell: bash
         run: |
@@ -58,13 +68,10 @@ jobs:
             "https://raw.githubusercontent.com/mrdoob/three.js/r180/examples/jsm/utils/BufferGeometryUtils.js" \
             -o "$GAME/vendor/three/utils/BufferGeometryUtils.js"
 
-          # Rewrite all Three.js example-module imports to local browser-resolvable paths.
           sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/loaders/GLTFLoader.js"
           sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/utils/SkeletonUtils.js"
           sed -i "s/from 'three';/from '..\/three.module.min.js';/g" "$GAME/vendor/three/utils/BufferGeometryUtils.js"
 
-          # GLTFLoader also imports BufferGeometryUtils one directory up from loaders.
-          # Its original path is correct after the local copy is created.
           if grep -R "from 'three'" "$GAME/vendor/three/loaders" "$GAME/vendor/three/utils"; then
             echo "Unresolved bare Three.js import remains"
             exit 1
@@ -98,16 +105,14 @@ jobs:
           test -s "$GAME/vendor/three/utils/BufferGeometryUtils.js"
           rm -rf .modularity_payload
 
-      - name: Expose exact runtime source for verification
+      - name: Expose exact runtime support files
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p .deployment_status
           printf 'Modularity Matrix build verified\ncommit=%s\nutc=%s\n' "$GITHUB_SHA" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > .deployment_status/modularity-matrix.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .deployment_status/modularity-matrix.txt modularity-matrix/index.html modularity-matrix/game.js modularity-matrix/app.css modularity-matrix/vendor/three modularity-matrix/vendor/factory-manifest.json
-          git commit -m "[skip ci] Expose exact Modularity Matrix runtime source" || true
+          git add .deployment_status/modularity-matrix.txt modularity-matrix/vendor/three modularity-matrix/vendor/factory-manifest.json
+          git commit -m "[skip ci] Expose Modularity Matrix support runtime source" || true
           git push
 
       - name: Configure Pages
