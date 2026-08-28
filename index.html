@@ -558,4 +558,5 @@ function openModal(){modalCard.scrollTop=0;modalLayer.classList.add('open')}func
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),2400)}
 let resizeRAF=0;addEventListener('resize',()=>{cancelAnimationFrame(resizeRAF);resizeRAF=requestAnimationFrame(()=>render(current))});addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});render('start');
 </script>
+<script src="localization.js"></script>
 </body></html>
