@@ -75,7 +75,40 @@ function tagSprite(text,color='#fff'){const c=document.createElement('canvas');c
 function pickup(label,type='good',laneIdx=1,z=-35){const g=new THREE.Group();g.userData={kind:'pickup',label,type,hit:false};const material=type==='good'?M.cyan:type==='need'?M.amber:type==='neutral'?M.blue:M.red;g.add(box(1.25,.78,1.55,material,0,.75,0));g.add(box(.9,.08,1.64,new THREE.MeshBasicMaterial({color:type==='bad'?0xff7b8d:0xb7f6ff}),0,1.16,0));const s=tagSprite(label,type==='bad'?'#ff617d':'#9cff67');s.position.set(0,2.0,0);g.add(s);g.position.set(lanes[laneIdx],0,z);scene.add(g);spawned.push(g);return g;}
 function gate(left,right,z=-42){const g=new THREE.Group();g.userData={kind:'gate',hit:false,left,right};const make=(x,choice)=>{const gg=new THREE.Group();gg.add(box(3.0,4.4,.35,choice.good?M.lime:M.red,0,2.2,0));const panel=new THREE.Mesh(new THREE.PlaneGeometry(2.7,1.3),canvasLabel(choice.label.replace(' ','|'),choice.good));panel.position.set(0,2.55,.2);gg.add(panel);gg.position.x=x;return gg;};g.add(make(-3.15,left),make(3.15,right));g.position.z=z;scene.add(g);gates.push(g);return g;}
 function clearObjects(){for(const o of [...spawned,...gates])scene.remove(o);spawned=[];gates=[];}
-function initMission(){clearObjects();state.picked=new Set();state.stageDone=false;stageT=0;retroDone=0;if(stage===0){[['CHASSIS','good',0],['CUSTOM BOX','bad',2],['COMPUTE','good',2],['OPAQUE LOT','bad',0],['I/O','good',1],['CUSTOM BOX','bad',0]].forEach((v,i)=>pickup(v[0],v[1],v[2],-25-i*13));}else if(stage===1){gate({label:'STANDARD INTERFACE',good:true},{label:'PROPRIETARY LOCK-IN',good:false},-45);}else if(stage===2){gate({label:'REVERSIBLE FASTENERS',good:true},{label:'BONDED ENCLOSURE',good:false},-45);}else if(stage===3){retroNeed=1+Math.min(3,Math.floor(debt/10));const seq=[];for(let i=0;i<retroNeed;i++)seq.push(['OLD COMPUTE','need',i%3]);seq.push(['KEEP','neutral',2],['KEEP','neutral',0],['KEEP','neutral',1]);seq.forEach((v,i)=>pickup(v[0],v[1],v[2],-24-i*14));missions[3].list=[ES?`${retroNeed} SUSTITUCIÓN${retroNeed>1?'ES':''} NECESARIA${retroNeed>1?'S':''}`:`${retroNeed} REQUIRED REPLACEMENT${retroNeed>1?'S':''}`];}else{[['REUSE','good',0],['DISPOSAL','bad',2],['REPAIR','good',2],['DISPOSAL','bad',0],['REUSE','good',1]].forEach((v,i)=>pickup(v[0],v[1],v[2],-25-i*14));}updateMissionUI();}
+function initMission(){
+ clearObjects();state.picked=new Set();state.stageDone=false;stageT=0;retroDone=0;
+ if(stage===0){
+   const seq=ES
+     ? [['CHASIS','good',0],['CAJA A MEDIDA','bad',2],['COMPUTACIÓN','good',2],['LOTE OPACO','bad',0],['E/S','good',1],['CAJA A MEDIDA','bad',0]]
+     : [['CHASSIS','good',0],['CUSTOM BOX','bad',2],['COMPUTE','good',2],['OPAQUE LOT','bad',0],['I/O','good',1],['CUSTOM BOX','bad',0]];
+   seq.forEach((v,i)=>pickup(v[0],v[1],v[2],-25-i*13));
+ }else if(stage===1){
+   gate(
+     {label:tr('STANDARD INTERFACE','INTERFAZ ESTÁNDAR'),good:true},
+     {label:tr('PROPRIETARY LOCK-IN','DEPENDENCIA PROPIETARIA'),good:false},
+     -45
+   );
+ }else if(stage===2){
+   gate(
+     {label:tr('REVERSIBLE FASTENERS','UNIONES REVERSIBLES'),good:true},
+     {label:tr('BONDED ENCLOSURE','CARCASA ADHERIDA'),good:false},
+     -45
+   );
+ }else if(stage===3){
+   retroNeed=1+Math.min(3,Math.floor(debt/10));
+   const seq=[];
+   for(let i=0;i<retroNeed;i++)seq.push([tr('OLD COMPUTE','COMPUTACIÓN ANTIGUA'),'need',i%3]);
+   seq.push([tr('KEEP','CONSERVAR'),'neutral',2],[tr('KEEP','CONSERVAR'),'neutral',0],[tr('KEEP','CONSERVAR'),'neutral',1]);
+   seq.forEach((v,i)=>pickup(v[0],v[1],v[2],-24-i*14));
+   missions[3].list=[ES?`${retroNeed} SUSTITUCIÓN${retroNeed>1?'ES':''} NECESARIA${retroNeed>1?'S':''}`:`${retroNeed} REQUIRED REPLACEMENT${retroNeed>1?'S':''}`];
+ }else{
+   const seq=ES
+     ? [['REUTILIZAR','good',0],['ELIMINACIÓN','bad',2],['REPARAR','good',2],['ELIMINACIÓN','bad',0],['REUTILIZAR','good',1]]
+     : [['REUSE','good',0],['DISPOSAL','bad',2],['REPAIR','good',2],['DISPOSAL','bad',0],['REUSE','good',1]];
+   seq.forEach((v,i)=>pickup(v[0],v[1],v[2],-25-i*14));
+ }
+ updateMissionUI();
+}
 function updateMissionUI(){const m=missions[stage];$('mission-no').textContent=m.no;$('mission-chip').textContent=m.chip;$('mission-title').textContent=m.title;$('mission-text').textContent=m.text;$('why-text').textContent=m.why;$('checklist').innerHTML=m.list.map(v=>`<div class="check ${state.picked.has(v)?'done':''}"><i></i><span>${v}</span></div>`).join('');$('score').textContent=String(score).padStart(4,'0');$('debt').textContent=debt;}
 function feedback(text,good=true){const e=$('feedback');e.textContent=text;e.style.color=good?'#a4ff67':'#ff8497';e.classList.add('show');clearTimeout(feedback.t);feedback.t=setTimeout(()=>e.classList.remove('show'),900);}
 function correct(label,points=150){score+=points;state.picked.add(label);feedback(`✓ ${label}  +${points}`,true);updateMissionUI();}
@@ -83,8 +116,42 @@ function wrong(text,amount=10){debt+=amount;feedback(`✕ ${text}  ${tr('DESIGN 
 function missionComplete(){if(state.stageDone)return;state.stageDone=true;paused=true;const L=missions[stage].lesson;$('lesson-kicker').textContent=stage===3?tr('YEAR 15 REVIEW','REVISIÓN DEL AÑO 15'):tr('MISSION COMPLETE','MISIÓN COMPLETADA');$('lesson-title').textContent=L[0];$('lesson-text').textContent=L[1];$('lesson-points').innerHTML=`<div class="lesson-point"><b>${L[2]}</b><span>${L[3]}</span></div>`;$('continue').textContent=stage===missions.length-1?tr('SEE FINAL RESULT','VER RESULTADO FINAL'):(ES?`CONTINUAR A ${stage===2?'AÑO 15':`MISIÓN ${String(stage+2).padStart(2,'0')}`}`:`CONTINUE TO ${stage===2?'YEAR 15':`MISSION ${String(stage+2).padStart(2,'0')}`}`);$('lesson').classList.add('active');}
 $('continue').onclick=()=>{$('lesson').classList.remove('active');if(stage===missions.length-1){finish();return;}stage++;paused=false;initMission();};
 function finish(){playing=false;paused=true;const grade=debt===0?tr('RETROFIT-READY ARCHITECT','ARQUITECTURA LISTA PARA MODERNIZACIÓN'):debt<=10?tr('LIFE-CYCLE DESIGNER','DISEÑO DE CICLO DE VIDA'):tr('DAY-1 OPTIMISER','OPTIMIZACIÓN SOLO DEL DÍA 1');$('grade').textContent=grade;$('f-score').textContent=score;$('f-debt').textContent=debt;$('f-retro').textContent=retroNeed;$('final-copy').textContent=debt===0?tr('Your architecture preserved localised retrofit paths and higher-value recovery options.','Tu arquitectura conservó rutas de modernización localizadas y opciones de recuperación de mayor valor.'):debt<=10?tr('The subsystem remained upgradeable, but one shortcut increased future intervention effort.','El subsistema siguió siendo actualizable, pero un atajo aumentó el esfuerzo de intervención futuro.'):tr('Several Day-1 shortcuts increased the amount of hardware that had to be disturbed at Year 15.','Varios atajos del diseño inicial aumentaron la cantidad de hardware que hubo que intervenir en el año 15.');$('finish').classList.add('active');}
-function stageIsDone(){if(stage===0)return ['CHASSIS','COMPUTE','I/O'].every(x=>state.picked.has(x));if(stage===1)return state.picked.has('STANDARD INTERFACE')||stageT>12;if(stage===2)return state.picked.has('REVERSIBLE FASTENERS')||stageT>12;if(stage===3)return retroDone>=retroNeed;return state.picked.has('REUSE')&&state.picked.has('REPAIR');}
-function collide(){for(const o of spawned){if(o.userData.hit)continue;if(o.position.z>6&&Math.abs(o.position.x-laneX)<1.25){o.userData.hit=true;o.visible=false;const {label,type}=o.userData;if(stage===0){if(['CHASSIS','COMPUTE','I/O'].includes(label)&&!state.picked.has(label))correct(label);else wrong(label);}else if(stage===3){if(type==='need'){retroDone++;correct(`${retroDone}/${retroNeed} OLD COMPUTE`,180);}else wrong('UNNECESSARY REPLACEMENT',8);}else if(stage===4){if(label==='REUSE'||label==='REPAIR')correct(label);else wrong('PREMATURE DISPOSAL');}}}for(const g of gates){if(g.userData.hit)continue;if(g.position.z>5){g.userData.hit=true;g.visible=false;const choice=laneX<0?g.userData.left:g.userData.right;if(choice.good)correct(choice.label,220);else wrong(choice.label,10);}}}
+function stageIsDone(){
+ if(stage===0)return (ES?['CHASIS','COMPUTACIÓN','E/S']:['CHASSIS','COMPUTE','I/O']).every(x=>state.picked.has(x));
+ if(stage===1)return state.picked.has(tr('STANDARD INTERFACE','INTERFAZ ESTÁNDAR'))||stageT>12;
+ if(stage===2)return state.picked.has(tr('REVERSIBLE FASTENERS','UNIONES REVERSIBLES'))||stageT>12;
+ if(stage===3)return retroDone>=retroNeed;
+ return state.picked.has(tr('REUSE','REUTILIZAR'))&&state.picked.has(tr('REPAIR','REPARAR'));
+}
+function collide(){
+ for(const o of spawned){
+   if(o.userData.hit)continue;
+   if(o.position.z>6&&Math.abs(o.position.x-laneX)<1.25){
+     o.userData.hit=true;o.visible=false;
+     const {label,type}=o.userData;
+     if(stage===0){
+       const required=ES?['CHASIS','COMPUTACIÓN','E/S']:['CHASSIS','COMPUTE','I/O'];
+       if(required.includes(label)&&!state.picked.has(label))correct(label);else wrong(label);
+     }else if(stage===3){
+       if(type==='need'){
+         retroDone++;
+         correct(`${retroDone}/${retroNeed} ${tr('OLD COMPUTE','COMPUTACIÓN ANTIGUA')}`,180);
+       }else wrong(tr('UNNECESSARY REPLACEMENT','SUSTITUCIÓN INNECESARIA'),8);
+     }else if(stage===4){
+       const good=ES?['REUTILIZAR','REPARAR']:['REUSE','REPAIR'];
+       if(good.includes(label))correct(label);else wrong(tr('PREMATURE DISPOSAL','ELIMINACIÓN PREMATURA'));
+     }
+   }
+ }
+ for(const g of gates){
+   if(g.userData.hit)continue;
+   if(g.position.z>5){
+     g.userData.hit=true;g.visible=false;
+     const choice=laneX<0?g.userData.left:g.userData.right;
+     if(choice.good)correct(choice.label,220);else wrong(choice.label,10);
+   }
+ }
+}
 function animateEnvironment(dt,elapsed){scene.traverse(o=>{if(o.userData?.agv){o.position.z=12-((elapsed*5+o.userData.offset)%175);}});for(const o of spawned){o.position.z+=worldSpeed*dt;o.rotation.y+=dt*.7;}for(const g of gates){g.position.z+=worldSpeed*dt;}if(runner){runner.position.x=THREE.MathUtils.damp(runner.position.x,laneX,10,dt);runner.position.y=.02+Math.sin(elapsed*10)*.025;if(!mixer){const l=runner.getObjectByName('legL'),r=runner.getObjectByName('legR'),a=runner.getObjectByName('armL'),b=runner.getObjectByName('armR'),s=Math.sin(elapsed*10)*.55;if(l){l.rotation.x=s;r.rotation.x=-s;a.rotation.x=-s;b.rotation.x=s;}}}camera.position.x=THREE.MathUtils.damp(camera.position.x,laneX*.18,3,dt);camera.lookAt(laneX*.08,1.2,-4.5);}
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.04),elapsed=clock.elapsedTime;if(mixer)mixer.update(dt);if(playing&&!paused){stageT+=dt;animateEnvironment(dt,elapsed);collide();$('progress').style.width=`${Math.min(100,stageT/missions[stage].duration*100)}%`;if(stageIsDone()&&stageT>2.1)missionComplete();}renderer.render(scene,camera);}
 function move(d){if(!playing||paused)return;lane=Math.max(0,Math.min(2,lane+d));laneX=lanes[lane];}
