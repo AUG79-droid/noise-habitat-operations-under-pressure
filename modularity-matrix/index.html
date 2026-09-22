@@ -16,7 +16,7 @@
 </script>
 </head>
 <body>
-<div id="lang-switch" role="group" aria-label="Idioma / Language" style="position:fixed;z-index:9999;right:14px;top:12px;display:flex;gap:6px"><button data-lang="es" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">ES</button><button data-lang="en" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">EN</button></div>
+<div id="lang-switch" style="position:fixed;z-index:9999;right:14px;top:12px;display:flex;gap:6px"><button data-lang="es" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">ES</button><button data-lang="en" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">EN</button></div>
 <div id="game-shell">
   <div id="viewport"></div>
   <header class="hud top"><div class="brand glass"><span class="kicker">ENGINEERING & ECO-DESIGN</span><strong>THE MODULARITY MATRIX</strong><small>Through-life design challenge</small></div><div class="stat glass"><b id="score">0000</b><span>SCORE</span></div><div class="stat glass danger"><b id="debt">0</b><span>DESIGN DEBT</span></div></header>
@@ -34,7 +34,6 @@
   const p=new URLSearchParams(location.search);
   const current=p.get("hubLang")||p.get("lang")||localStorage.getItem("modularity-language")||((navigator.language||"").toLowerCase().startsWith("es")?"es":"en");
   document.documentElement.lang=current==="es"?"es":"en";
-  if(document.documentElement.lang==="es") document.title="The Modularity Matrix — Reto de fábrica";
   if(document.documentElement.lang==="es"){
     const map=[
       [".brand .kicker","INGENIERÍA Y ECODISEÑO"],[".brand small","Reto de diseño durante el ciclo de vida"],
