@@ -16,6 +16,7 @@
 </script>
 </head>
 <body>
+<div id="lang-switch" style="position:fixed;z-index:9999;right:14px;top:12px;display:flex;gap:6px"><button data-lang="es" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">ES</button><button data-lang="en" style="padding:7px 10px;border-radius:999px;border:1px solid #7beaff;background:#07111b;color:#fff;font-weight:800">EN</button></div>
 <div id="game-shell">
   <div id="viewport"></div>
   <header class="hud top"><div class="brand glass"><span class="kicker">ENGINEERING & ECO-DESIGN</span><strong>THE MODULARITY MATRIX</strong><small>Through-life design challenge</small></div><div class="stat glass"><b id="score">0000</b><span>SCORE</span></div><div class="stat glass danger"><b id="debt">0</b><span>DESIGN DEBT</span></div></header>
@@ -28,6 +29,21 @@
   <div id="finish" class="modal"><div class="lesson-card glass"><span class="kicker">FINAL THROUGH-LIFE REVIEW</span><h2 id="grade"></h2><p id="final-copy"></p><div class="final-grid"><div><b id="f-score">0</b><span>SCORE</span></div><div><b id="f-debt">0</b><span>DESIGN DEBT</span></div><div><b id="f-retro">0</b><span>YEAR-15 MODULES</span></div></div><button onclick="location.reload()">PLAY AGAIN</button></div></div>
   <div id="fatal" class="fatal"><b>GAME ENGINE COULD NOT START</b><span id="fatal-msg"></span><button onclick="location.reload()">RETRY</button></div>
 </div>
+<script>
+(function(){
+  const p=new URLSearchParams(location.search);
+  const current=p.get("hubLang")||p.get("lang")||localStorage.getItem("modularity-language")||((navigator.language||"").toLowerCase().startsWith("es")?"es":"en");
+  document.documentElement.lang=current==="es"?"es":"en";
+  document.querySelectorAll("[data-lang]").forEach(b=>{
+    b.style.opacity=b.dataset.lang===document.documentElement.lang?"1":".55";
+    b.onclick=()=>{
+      p.set("hubLang",b.dataset.lang);
+      try{localStorage.setItem("modularity-language",b.dataset.lang)}catch(e){}
+      location.search=p.toString();
+    };
+  });
+})();
+</script>
 <script type="module" src="./game.js"></script>
 </body>
 </html>
