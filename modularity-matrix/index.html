@@ -34,6 +34,29 @@
   const p=new URLSearchParams(location.search);
   const current=p.get("hubLang")||p.get("lang")||localStorage.getItem("modularity-language")||((navigator.language||"").toLowerCase().startsWith("es")?"es":"en");
   document.documentElement.lang=current==="es"?"es":"en";
+  if(document.documentElement.lang==="es"){
+    const map=[
+      [".brand .kicker","INGENIERÍA Y ECODISEÑO"],[".brand small","Reto de diseño durante el ciclo de vida"],
+      [".stat:not(.danger) span","PUNTUACIÓN"],[".stat.danger span","DEUDA DE DISEÑO"],
+      ["#mission-no","MISIÓN 01"],["#mission-chip","CONSTRUIR"],["#mission-title","Construye el módulo informático de misión"],
+      ["#mission-text","Recoge exactamente las tres piezas indicadas en tu briefing de ingeniería."],[".why b","¿POR QUÉ?"],
+      ["#why-text","Una arquitectura modular comienza separando funciones en bloques reemplazables."],
+      ["#tip-title","MOVER"],["#tip-text","A / D o ← / → para cambiar de carril"],
+      ["#boot .kicker","TRANSPORTE TÁCTICO · ESCENARIO FORMATIVO FICTICIO"],
+      ["#boot p","Diseña un subsistema informático de misión que pueda seguir reparándose y modernizándose dentro de quince años."],
+      [".boot-rule div:nth-child(1) span","Recoge lo que pide el briefing."],
+      [".boot-rule div:nth-child(2) span","Elige interfaces que conserven opciones futuras."],
+      [".boot-rule div:nth-child(3) span","Afronta las consecuencias en el AÑO 15."],
+      ["#load-state","Preparando motor del juego…"],["#start","INICIAR RETO DE INGENIERÍA"],
+      ["#lesson-kicker","MISIÓN COMPLETADA"],["#continue","CONTINUAR"],
+      ["#finish .kicker","REVISIÓN FINAL DEL CICLO DE VIDA"],
+      ["#finish .final-grid div:nth-child(1) span","PUNTUACIÓN"],
+      ["#finish .final-grid div:nth-child(2) span","DEUDA DE DISEÑO"],
+      ["#finish .final-grid div:nth-child(3) span","MÓDULOS DEL AÑO 15"],
+      ["#finish button","JUGAR DE NUEVO"],["#fatal b","NO SE PUDO INICIAR EL MOTOR DEL JUEGO"],["#fatal button","REINTENTAR"]
+    ];
+    map.forEach(([s,t])=>{const e=document.querySelector(s);if(e)e.textContent=t});
+  }
   document.querySelectorAll("[data-lang]").forEach(b=>{
     b.style.opacity=b.dataset.lang===document.documentElement.lang?"1":".55";
     b.onclick=()=>{
