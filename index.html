@@ -160,6 +160,30 @@ linear-gradient(180deg,#071222 0%,#06101d 100%);line-height:1.45;color:#eaf7ff;p
 @media(max-width:900px){.courseHero{grid-template-columns:1fr}.courseHow{grid-template-columns:repeat(2,1fr)}.missionOverviewGrid{grid-template-columns:1fr 1fr}.theoryGrid{grid-template-columns:1fr}}
 @media(max-width:600px){.coursePage{padding-top:20px}.courseInner{width:min(100% - 22px,1180px)}.courseHow,.missionOverviewGrid{grid-template-columns:1fr}.courseHeroMain,.courseHeroSide{padding:20px}.courseActions{align-items:stretch;flex-direction:column}.courseActions>div:last-child{display:flex;width:100%;gap:8px}.courseBtn{flex:1}}
 
+
+.startSpanishCover{position:absolute;inset:0;z-index:4;overflow:hidden;background:
+radial-gradient(circle at 52% 42%,rgba(17,76,111,.26),transparent 31%),
+linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-height:1.15;pointer-events:none;font-family:Inter,Segoe UI,Arial,sans-serif}
+.startSpanishCover::before{content:"";position:absolute;left:0;right:0;top:0;height:6.4%;border-bottom:1px solid rgba(76,215,246,.22);background:#071225}
+.startSpanishCover::after{content:"";position:absolute;right:-5%;top:15%;width:78%;height:30%;background:linear-gradient(145deg,rgba(21,76,110,.08),rgba(20,113,153,.36));clip-path:polygon(100% 0,100% 80%,12% 100%,56% 48%);opacity:.72}
+.startSpanishCover .esMcTitle{position:absolute;z-index:2;left:2.1%;top:1.15%;font-size:3.75%;font-weight:900;font-style:italic;letter-spacing:-.035em;color:#47d6f6}
+.startSpanishCover .esMcIcons{position:absolute;z-index:2;right:2.2%;top:1.55%;display:flex;gap:3.7%;width:11.5%;justify-content:space-between;color:#48d7f7;font-size:2.1%}
+.startSpanishCover .esHero{position:absolute;z-index:2;left:11%;right:11%;top:30.2%;text-align:center}
+.startSpanishCover .esHero h1{margin:0;color:#49d5f4;font-size:4.15%;font-weight:900;letter-spacing:-.022em;line-height:1.05;text-transform:uppercase;text-shadow:0 0 18px rgba(76,215,246,.18)}
+.startSpanishCover .esHero p{margin:2.2% auto 0;max-width:61%;font-size:1.45%;line-height:1.55;color:#d2d7df;font-weight:500;text-transform:uppercase}
+.startSpanishCover .esStats{position:absolute;z-index:2;left:10%;right:10%;top:53.7%;display:grid;grid-template-columns:repeat(4,1fr);gap:1.3%}
+.startSpanishCover .esStat{height:10.1vw;max-height:110px;min-height:76px;border:1px solid rgba(76,215,246,.25);background:rgba(37,52,78,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.startSpanishCover .esStat .ico{font-size:2.5%;color:#4bd7f6;margin-bottom:4%}
+.startSpanishCover .esStat strong{display:block;color:#4bd7f6;font:800 1.55% ui-monospace,Consolas,monospace;letter-spacing:.03em}
+.startSpanishCover .esStat span{display:block;color:#d6d9df;font:700 1.03% ui-monospace,Consolas,monospace;letter-spacing:.12em;margin-top:2%;text-transform:uppercase}
+.startSpanishCover .esStartBtn{position:absolute;z-index:2;left:39.2%;top:69.6%;width:21.6%;height:5.35%;display:flex;align-items:center;justify-content:center;gap:4%;background:#4bd4f2;color:#092038;box-shadow:0 0 23px rgba(76,215,246,.22);font:900 1.35% ui-monospace,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+.startSpanishCover .esBottom{position:absolute;z-index:2;bottom:5.5%;left:3.1%;right:3.1%;display:flex;justify-content:space-between;color:#38b8d5;font:800 .88% ui-monospace,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+@media(max-width:760px){
+.startSpanishCover .esHero h1{font-size:4.45%}.startSpanishCover .esHero p{font-size:1.7%;max-width:70%}
+.startSpanishCover .esStat strong{font-size:1.8%}.startSpanishCover .esStat span{font-size:1.1%}
+.startSpanishCover .esStartBtn{font-size:1.6%}
+}
+
 </style>
 </head>
 <body>
@@ -349,11 +373,37 @@ function restartMission(){
  else{m1Complete=false;m2Complete=false;m3Complete=false;m4Complete=false;m5Complete=false;m6Complete=false;selectedChoice1=null;selectedRoute2=null;selectedResponse3=null;selectedWindow4=null;selectedFinding5=null;selectedAction5=null;selectedConclusion6=null;viewedRoutes2=new Set();routeReviewIndex2=0;alertStep3=0;maxAlertStep3=0;windowStep4=0;maxWindowStep4=0;evidenceStep5=0;maxEvidenceStep5=0;auditStep6=0;maxAuditStep6=0;guideSteps={map1:0,ground1:0,complete1:0,map2:0,complete2:0,map3:0,complete3:0,map4:0,complete4:0,map5:0,complete5:0,map6:0,complete6:0};guideOpen=false;render('start');showToast('CAMPAIGN RESET · START WITH MISSION 01')}
 }
 
+
+function addSpanishStartCover(shell){
+  const params=new URLSearchParams(location.search);
+  if(params.get('hubLang')!=='es')return;
+  const cover=document.createElement('div');
+  cover.className='startSpanishCover';
+  cover.setAttribute('aria-hidden','true');
+  cover.innerHTML=`
+    <div class="esMcTitle">CONTROL DE MISIÓN</div>
+    <div class="esMcIcons"><span>◔</span><span>⚙</span><span>◎</span></div>
+    <div class="esHero">
+      <h1>RUIDO Y HÁBITAT<br>OPERACIONES BAJO PRESIÓN</h1>
+      <p>SISTEMAS ACTIVOS. VARIABLES AMBIENTALES CRÍTICAS. A LA ESPERA DE DECISIÓN OPERATIVA.</p>
+    </div>
+    <div class="esStats">
+      <div class="esStat"><div class="ico">◎</div><strong>6</strong><span>MISIONES</span></div>
+      <div class="esStat"><div class="ico">◷</div><strong>72 H</strong><span>HORAS OPERACIONALES</span></div>
+      <div class="esStat"><div class="ico">◉</div><strong>ACTIVA</strong><span>METEO DINÁMICA</span></div>
+      <div class="esStat"><div class="ico">◉</div><strong>MÚLTIPLES</strong><span>SENSORES ACTIVOS</span></div>
+    </div>
+    <div class="esStartBtn"><span>➤</span><span>INICIAR MISIÓN</span></div>
+    <div class="esBottom"><span>ESTADO DEL SISTEMA</span><span>ENLACE ACTIVO</span></div>
+  `;
+  shell.appendChild(cover);
+}
+
 function render(name){
  current=name;activeMission=missionOf(name);const token=++renderToken;guideHost.innerHTML='';document.body.classList.toggle('guide-visible',!!(guideOpen&&guideScripts[name]));updateNav();if(name==='campaignIntro'||String(name).startsWith('theory')){renderCoursePage(name);return}const s=screens[name],cached=screenImages[name];
  if(!cached||!cached.complete||!cached.naturalWidth){stage.innerHTML='<div class="loading-card"><div class="loading-spinner"></div><div>Loading tactical data…</div><small>Preparing the mission display before guidance appears</small></div>';if(cached){const retry=()=>{if(current===name&&token===renderToken)render(name)};cached.addEventListener('load',retry,{once:true})}return}
  const {rw,rh}=fitDims(s.w,s.h);stage.innerHTML='';const shell=document.createElement('div');shell.className='screen';shell.dataset.screen=name;shell.style.width=rw+'px';shell.style.height=rh+'px';shell.style.aspectRatio=`${s.w}/${s.h}`;const img=cached;if(img.parentNode)img.remove();img.alt='';img.draggable=false;shell.appendChild(img);stage.appendChild(shell);
- if(name==='start'){guideOpen=false;addHit(shell,'Start campaign briefing',rectPct(502,761,276,58,s.w,s.h),()=>render('campaignIntro'))}
+ if(name==='start'){guideOpen=false;addHit(shell,'Start campaign briefing',rectPct(502,761,276,58,s.w,s.h),()=>render('campaignIntro'));addSpanishStartCover(shell)}
  if(name==='map1'){addSidebarHits(shell,s,1);addHit(shell,'Ground Run GR-774A',rectPct(286,151,316,112,s.w,s.h),()=>{guideSteps.ground1=0;guideOpen=true;render('ground1')});addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('FIRST SELECT GROUND RUN GR-774A'));addAvatarGuide(shell,'map1',s)}
  if(name==='ground1'){addSidebarHits(shell,s,1);addHit(shell,'Deploy squad',rectPct(30,1200,259,50,s.w,s.h),openDecision1);addAvatarGuide(shell,'ground1',s)}
  if(name==='complete1'){addSidebarHits(shell,s,1);addTheoryLaunch(shell,s,1);if(selectedChoice1){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 01 control</small><strong>${choices1[selectedChoice1].title}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete1',s)}
