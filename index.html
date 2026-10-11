@@ -252,6 +252,53 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
   .guide-action{font-size:11px}
 }
 
+
+/* Campaign briefing + theory text-size correction: EN / ES */
+.coursePage{font-size:16px;line-height:1.6;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:auto}
+.coursePage .courseInner{width:min(1320px,calc(100% - 48px))}
+.coursePage .courseEyebrow{font:900 13px/1.45 ui-monospace,Consolas,monospace;letter-spacing:.08em}
+.coursePage .courseHero p{font-size:18px;line-height:1.65;color:#e2ecf5}
+.coursePage .courseHeroSide small{font:900 13px/1.45 ui-monospace,Consolas,monospace;color:#b5cad9}
+.coursePage .courseHeroSide strong{font-size:18px;line-height:1.5}
+.coursePage .courseSectionTitle{align-items:baseline;flex-wrap:wrap;row-gap:8px}
+.coursePage .courseSectionTitle h2{font-size:clamp(26px,2.5vw,34px);line-height:1.2}
+.coursePage .courseSectionTitle span{font:800 12px/1.5 ui-monospace,Consolas,monospace;color:#b8cddd;letter-spacing:.05em}
+.coursePage .courseHow{gap:14px}
+.coursePage .courseHow .item{padding:20px;min-width:0}
+.coursePage .courseHow b{width:34px;height:34px;font:900 14px/1 ui-monospace,Consolas,monospace}
+.coursePage .courseHow strong{font-size:18px;line-height:1.4;margin-bottom:8px}
+.coursePage .courseHow span{font-size:16px;line-height:1.6;color:#d6e4ef}
+.coursePage .missionOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.coursePage .missionOverviewCard{min-height:0;padding:24px;overflow-wrap:anywhere}
+.coursePage .missionOverviewCard small{font:900 12px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.055em}
+.coursePage .missionOverviewCard h3{font-size:22px;line-height:1.28;margin:10px 0}
+.coursePage .missionOverviewCard p{font-size:17px;line-height:1.6;color:#dce9f3;margin-bottom:14px}
+.coursePage .missionOverviewCard .missionDo{font-size:16px;line-height:1.6;padding-top:13px}
+.coursePage .theoryCard{padding:24px}
+.coursePage .theoryCard small{font:900 12px/1.45 ui-monospace,Consolas,monospace;color:#bfd0dd}
+.coursePage .theoryCard h3{font-size:22px;line-height:1.3}
+.coursePage .theoryCard p,.coursePage .theoryCard ul{font-size:17px;line-height:1.65;color:#dae7f1}
+.coursePage .theoryLink{font-size:17px;line-height:1.6}
+.coursePage .theoryTakeaway{padding:22px}
+.coursePage .theoryTakeaway small{font:900 12px/1.5 ui-monospace,Consolas,monospace}
+.coursePage .theoryTakeaway strong{font-size:22px;line-height:1.4}
+.coursePage .theoryTakeaway p{font-size:17px;line-height:1.65;color:#d9e7f1}
+.coursePage .courseActions{padding:18px;flex-wrap:wrap}
+.coursePage .courseActions .progressText{font:800 13px/1.5 ui-monospace,Consolas,monospace}
+.coursePage .courseBtn{font:900 14px/1.3 ui-monospace,Consolas,monospace;min-height:48px;padding:12px 18px;letter-spacing:.03em}
+@media(max-width:1100px){
+ .coursePage .courseHow{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .coursePage .missionOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ .coursePage .courseInner{width:calc(100% - 24px)}
+ .coursePage .courseHow,.coursePage .missionOverviewGrid{grid-template-columns:1fr}
+ .coursePage .courseHeroMain,.coursePage .courseHeroSide{padding:20px}
+ .coursePage .courseHow span{font-size:16px}
+ .coursePage .missionOverviewCard{padding:20px}
+ .coursePage .courseActions>div:last-child{display:flex;flex-wrap:wrap}
+}
+
 </style>
 </head>
 <body>
