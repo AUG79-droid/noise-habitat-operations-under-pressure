@@ -80,6 +80,38 @@ jobs:
                   if(/^map[2-6]$/.test(screen)&&(!result.readableLayout||result.layoutChildren<6||result.visibleActions<3))errors.push(locale+'/'+size.label+'/'+screen+' readable-stage not installed '+JSON.stringify(result));
                   if(size.label==='desktop')await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'}).catch(async()=>{fs.mkdirSync('screens',{recursive:true});await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'});});
 
+                  if(/^map[2-6]$/.test(screen)){
+                    const lengths={map2:3,map3:3,map4:3,map5:4,map6:5};
+                    for(let i=0;i<lengths[screen];i++){
+                      await page.evaluate(({screen,i})=>{
+                        guideOpen=false;
+                        if(screen==='map2')routeReviewIndex2=i;
+                        if(screen==='map3'){alertStep3=i;maxAlertStep3=2;}
+                        if(screen==='map4'){windowStep4=i;maxWindowStep4=2;}
+                        if(screen==='map5'){evidenceStep5=i;maxEvidenceStep5=3;}
+                        if(screen==='map6'){auditStep6=i;maxAuditStep6=4;}
+                        render(screen);
+                      },{screen,i});
+                      await page.waitForTimeout(90);
+                      const info=await page.evaluate(()=>{
+                        const root=document.querySelector('.readableMission');
+                        const buttons=[...root?.querySelectorAll('button:not(:disabled)')||[]];
+                        return {present:!!root,activeButtons:buttons.length,screenHeight:root?.clientHeight,contentHeight:root?.scrollHeight,
+                         heading:root?.querySelector('strong')?.textContent||'',
+                         openControls:buttons.filter(x=>x.getBoundingClientRect().height>=34).length};
+                      });
+                      if(!info.present||info.openControls<3)errors.push(locale+'/'+size.label+'/'+screen+'/state'+i+' controls missing '+JSON.stringify(info));
+                      if(size.label==='desktop')await page.screenshot({path:'screens/'+locale+'-'+screen+'-state-'+(i+1)+'.png'});
+                    }
+                    await page.evaluate(screen=>{
+                      if(screen==='map2')routeReviewIndex2=0;
+                      if(screen==='map3')alertStep3=0;
+                      if(screen==='map4')windowStep4=0;
+                      if(screen==='map5')evidenceStep5=0;
+                      if(screen==='map6')auditStep6=0;
+                      render(screen);
+                    },screen);
+                  }
                   if(size.label==='desktop'&&/^(map|ground|complete)[1-6]$/.test(screen)){
                     const steps=await page.evaluate(screen=>guideScripts[screen]?.length||0,screen);
                     for(let i=0;i<steps;i++){
