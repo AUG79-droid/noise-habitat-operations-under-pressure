@@ -97,6 +97,36 @@ jobs:
                     }
                   }
                   if(size.label==='desktop'&&/^map[1-6]$/.test(screen)){
+                    const choiceMap={
+                      map1:['openDecision1','openIntel1'],
+                      map2:['openRouteComparison2','openIntel2'],
+                      map3:['openDecision3','openIntel3'],
+                      map4:['openWindowComparison4','openIntel4'],
+                      map5:['openFinding5','openIntel5'],
+                      map6:['openAuditCase6','openIntel6']
+                    };
+                    for(const modalName of choiceMap[screen]||[]){
+                      let result={ok:false};
+                      try{
+                        result=await page.evaluate(name=>{
+                          guideOpen=false;
+                          const fn=window[name]||eval(name);
+                          fn();
+                          const layer=document.querySelector('#modalLayer');
+                          const items=[...layer.querySelectorAll('p,h3,button,.choice,.modalActions,.plain')];
+                          const shown=items.filter(e=>{const x=e.getBoundingClientRect();return x.width>0&&x.height>0});
+                          return {ok:layer.classList.contains('open'),count:shown.length,
+                            minTextSize:Math.min(...shown.filter(x=>x.matches('p,h3,.choice,.plain')).map(x=>parseFloat(getComputedStyle(x).fontSize)),1000),
+                            width:layer.querySelector('.modal')?.getBoundingClientRect().width||0};
+                        },modalName);
+                        await page.waitForTimeout(60);
+                        await page.screenshot({path:'screens/'+locale+'-'+screen+'-'+modalName+'.png'});
+                        await page.evaluate(()=>closeModal());
+                      }catch(e){errors.push(locale+'/'+screen+'/'+modalName+' modal exception '+e.message)}
+                      if(!result.ok||result.count<3||result.width<180)errors.push(locale+'/'+screen+'/'+modalName+' invalid '+JSON.stringify(result));
+                    }
+                  }
+                  if(size.label==='desktop'&&/^map[1-6]$/.test(screen)){
                     await page.evaluate((screen)=>{guideOpen=false;render(screen);const m=Number(screen.slice(-1));window['openBriefing'+m](false);},screen);
                     await page.waitForTimeout(100);
                     const modalInfo=await page.evaluate(()=>({visible:document.getElementById('modalLayer').classList.contains('open'),heading:document.querySelector('.modal h2')?.textContent}));
