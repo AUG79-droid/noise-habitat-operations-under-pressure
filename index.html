@@ -406,9 +406,87 @@ const guideScripts={
  complete6:[{meta:'ARIA · OPS GUIDE · CAMPAIGN COMPLETE',text:'You completed the course. Across six missions you built the full management loop: <strong>plan → control → monitor → adapt → investigate → improve → demonstrate evidence.</strong> Open the rewards panel or revisit any mission as a learning recap.',cta:'OPEN CAMPAIGN REWARDS',action:()=>openRewardsPanel(6)}]
 };
 
-function speakGuide(text){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g,''));u.lang='en-GB';u.rate=.96;window.speechSynthesis.speak(u)}
+/* Hand-reviewed ARIA narration. Keep audio and on-screen guide text aligned in both languages. */
+const ariaSpanishGuideText={
+  map1:[
+    'Soy ARIA, tu guía de misión. <strong>Esta pantalla es tu puesto de planificación.</strong> En la misión 1 debes planificar una operación obligatoria: la prueba de motor en tierra GR-774A.',
+    'Antes de decidir cómo ejecutar la prueba, consulta las <strong>condiciones activas</strong> de la derecha. Lo importante es que el plan actual ya presenta un <strong>conflicto por ruido</strong>.',
+    'La barra inferior es la <strong>cronología táctica</strong>. Indica que existe cierto margen dentro de la ventana operativa. Por tanto, la hora de ejecución puede ser una medida de control.',
+    'Selecciona ahora la <strong>prueba de motor en tierra GR-774A</strong>. En la siguiente pantalla explicaré el conflicto y te ayudaré a comparar las medidas de control.'
+  ],
+  ground1:[
+    'Bien. La prueba es necesaria; la cuestión es <strong>cómo realizarla con las condiciones de hoy</strong>.',
+    'La alerta indica que el plan actual afecta tanto a la <strong>zona residencial R-01</strong> como al <strong>corredor del humedal H-02</strong>. Interprétala como una advertencia operativa, no como un examen de acústica.',
+    'Compara <strong>tres formas de realizar la misma prueba</strong>: ejecutarla ahora, retrasarla treinta minutos o trasladarla a otra zona. Cada opción modifica de forma distinta la disponibilidad de la aeronave y la exposición al ruido.'
+  ],
+  complete1:[
+    'Has completado la misión 1. Has aprendido que <strong>el horario y el lugar de una operación pueden cambiar sus consecuencias sobre el entorno</strong>, aunque la operación sea obligatoria.'
+  ],
+  map2:[
+    'Esta misión es más sencilla de lo que parece el mapa. <strong>El vuelo de entrenamiento debe realizarse.</strong> Solo tienes que elegir una de las tres rutas ficticias. Te las mostraré <strong>una a una</strong>.',
+    'Para cada ruta, lee la explicación de la derecha: <strong>qué protege y a quién expone a las molestias</strong>. Pulsa Siguiente ruta hasta haber visto las rutas A, B y C. Después podrás elegir.'
+  ],
+  complete2:[
+    'Has completado la misión 2. La lección es la <strong>planificación espacial</strong>: cambiar una ruta solo es útil si se evalúan conjuntamente la comunidad, el hábitat y la exposición acumulada.'
+  ],
+  map3:[
+    'Revisarás <strong>el mismo plan aprobado en tres momentos distintos</strong>. Empieza por Plan aprobado, después consulta la alerta de fauna y finalmente el conflicto. Puedes volver a pulsar cualquier estado ya mostrado para revisarlo.'
+  ],
+  complete3:[
+    'Has completado la misión 3. La lección es el <strong>control adaptativo</strong>: vigilar las condiciones ambientales solo resulta útil si los cambios detectados permiten modificar la respuesta operativa.'
+  ],
+  map4:[
+    'En la misión 4 cambia la variable que puedes controlar. La operación debe realizarse esta noche, pero <strong>tú eliges la franja horaria</strong>. Revisa las tres opciones una a una y después compáralas.'
+  ],
+  complete4:[
+    'Has completado la misión 4. La lección es el <strong>control de horarios</strong>: una misma operación puede generar consecuencias diferentes según el momento en que se programe.'
+  ],
+  map5:[
+    'Esta misión se centra en el <strong>ruido ambiental</strong>. Ya se ha realizado una operación obligatoria y una zona residencial informa de molestias superiores a las previstas. Revisa <strong>el registro de ruido, el tiempo meteorológico, la hora real de ejecución y el registro final de controles</strong> antes de decidir por qué aumentó la exposición.'
+  ],
+  complete5:[
+    'Has completado la misión 5. La lección es el <strong>control adaptativo del ruido</strong>: los cambios de viento y horario alteran la exposición de la comunidad. Un control sólido comprueba las condiciones reales justo antes de ejecutar la operación.'
+  ],
+  map6:[
+    'Esta es la auditoría final de la campaña. <strong>No tienes que memorizar los números de los apartados de ISO 14001.</strong> Debes demostrar que los controles ambientales se planificaron, se adaptaron cuando cambiaron las condiciones y se mejoraron cuando alguno falló.'
+  ],
+  complete6:[
+    'Has terminado el curso. Durante seis misiones has construido un ciclo completo de gestión: <strong>planificar, controlar, supervisar, adaptar, investigar, mejorar y demostrar los resultados con evidencias.</strong> Abre el panel de reconocimientos o revisa cualquiera de las misiones.'
+  ]
+};
+const ariaSpanishSelected=new URLSearchParams(location.search).get('hubLang')==='es';
+function speakGuide(text){
+  if(!('speechSynthesis' in window))return;
+  const synth=window.speechSynthesis;
+  synth.cancel();
+  const locale=ariaSpanishSelected?'es-ES':'en-GB';
+  const phrase=text.replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+  let completed=false;
+  const speakWithAvailableVoice=()=>{
+    if(completed)return;
+    completed=true;
+    const voices=synth.getVoices();
+    const matches=voices.filter(v=>v.lang && v.lang.toLowerCase().startsWith(ariaSpanishSelected?'es':'en'));
+    const preferred=matches.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||matches[0];
+    if(ariaSpanishSelected && !preferred){
+      showToast('No hay una voz en español disponible en este navegador.');
+      return; // Do not fall back to an English voice for the Spanish edition.
+    }
+    const utterance=new SpeechSynthesisUtterance(phrase);
+    utterance.lang=locale;
+    utterance.rate=.96;
+    if(preferred)utterance.voice=preferred;
+    synth.speak(utterance);
+  };
+  if(ariaSpanishSelected && synth.getVoices().length===0){
+    const ready=()=>{synth.removeEventListener('voiceschanged',ready);speakWithAvailableVoice();};
+    synth.addEventListener('voiceschanged',ready,{once:true});
+    setTimeout(()=>{synth.removeEventListener('voiceschanged',ready);speakWithAvailableVoice();},1200);
+  }else speakWithAvailableVoice();
+}
+
 function addGuideHint(shell,step,s){if(!step||!step.focus)return;const r=rectPct(...step.focus,s.w,s.h);const f=document.createElement('div');f.className='guide-focus';Object.assign(f.style,{left:r.left+'%',top:r.top+'%',width:r.width+'%',height:r.height+'%'});shell.appendChild(f);if(step.hint){const h=document.createElement('div');h.className='guide-hint'+(step.hintSide==='right'?' arrow-right':'');h.innerHTML=step.hint;h.style.left=(step.hintPos?.[0]||50)+'%';h.style.top=(step.hintPos?.[1]||50)+'%';shell.appendChild(h)}}
-function addAvatarGuide(shell,screenName,s){const script=guideScripts[screenName];if(!script)return;if(!guideOpen){const mini=document.createElement('button');mini.className='guide-minibtn';mini.title='Open ARIA guide';mini.onclick=()=>{guideOpen=true;render(screenName)};shell.appendChild(mini);return}const idx=Math.min(guideSteps[screenName]||0,script.length-1),step=script[idx];addGuideHint(shell,step,s);const dots=script.map((_,i)=>`<span class="guide-dot ${i===idx?'active':''}"></span>`).join('');guideHost.innerHTML='';const dock=document.createElement('div');dock.className='guide-dock';dock.innerHTML=`<button class="guide-close" aria-label="Hide mission guide">×</button><div class="guide-avatar"><div class="portrait-window"><img src="${ARIA_AVATAR}" alt="ARIA mission guide"></div><span class="guide-online"></span></div><div class="guide-copy"><div class="guide-meta">${step.meta}</div><div class="guide-message">${step.text}</div><div class="guide-progress">${dots}</div></div><div class="guide-actions"><button class="guide-action secondary" data-guide="speak">LISTEN</button>${idx>0?'<button class="guide-action secondary" data-guide="back">BACK</button>':''}<button class="guide-action" data-guide="next">${step.cta||(idx===script.length-1?'GOT IT':'NEXT')}</button></div>`;dock.querySelector('.guide-close').onclick=()=>{guideOpen=false;render(screenName)};dock.querySelector('[data-guide="speak"]').onclick=()=>speakGuide(step.text);const b=dock.querySelector('[data-guide="back"]');if(b)b.onclick=()=>{guideSteps[screenName]=Math.max(0,idx-1);render(screenName)};dock.querySelector('[data-guide="next"]').onclick=()=>{if(step.action){step.action();return}if(idx<script.length-1){guideSteps[screenName]=idx+1;render(screenName)}else{guideOpen=false;render(screenName)}};guideHost.appendChild(dock)}
+function addAvatarGuide(shell,screenName,s){const script=guideScripts[screenName];if(!script)return;if(!guideOpen){const mini=document.createElement('button');mini.className='guide-minibtn';mini.title='Open ARIA guide';mini.onclick=()=>{guideOpen=true;render(screenName)};shell.appendChild(mini);return}const idx=Math.min(guideSteps[screenName]||0,script.length-1),step=script[idx];const displayedGuideText=ariaSpanishSelected?(ariaSpanishGuideText[screenName]?.[idx]||step.text):step.text;addGuideHint(shell,step,s);const dots=script.map((_,i)=>`<span class="guide-dot ${i===idx?'active':''}"></span>`).join('');guideHost.innerHTML='';const dock=document.createElement('div');dock.className='guide-dock';dock.innerHTML=`<button class="guide-close" aria-label="Hide mission guide">×</button><div class="guide-avatar"><div class="portrait-window"><img src="${ARIA_AVATAR}" alt="ARIA mission guide"></div><span class="guide-online"></span></div><div class="guide-copy"><div class="guide-meta">${step.meta}</div><div class="guide-message">${displayedGuideText}</div><div class="guide-progress">${dots}</div></div><div class="guide-actions"><button class="guide-action secondary" data-guide="speak">LISTEN</button>${idx>0?'<button class="guide-action secondary" data-guide="back">BACK</button>':''}<button class="guide-action" data-guide="next">${step.cta||(idx===script.length-1?'GOT IT':'NEXT')}</button></div>`;dock.querySelector('.guide-close').onclick=()=>{guideOpen=false;render(screenName)};dock.querySelector('[data-guide="speak"]').onclick=()=>speakGuide(displayedGuideText);const b=dock.querySelector('[data-guide="back"]');if(b)b.onclick=()=>{guideSteps[screenName]=Math.max(0,idx-1);render(screenName)};dock.querySelector('[data-guide="next"]').onclick=()=>{if(step.action){step.action();return}if(idx<script.length-1){guideSteps[screenName]=idx+1;render(screenName)}else{guideOpen=false;render(screenName)}};guideHost.appendChild(dock)}
 
 
 const campaignOverview=[
