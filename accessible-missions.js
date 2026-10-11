@@ -96,6 +96,47 @@
    b:{name:'Desvío oriental',plain:'Se aleja de los vecinos, pero cruza el humedal y una zona de actividad de aves.',watch:'HUMEDAL Y AVES',meaning:'Reduces las molestias a los vecinos, pero trasladas más perturbación hacia el hábitat.'},
    c:{name:'Arco de separación',plain:'Ruta algo más larga, pero aumenta la distancia respecto a los vecinos y las zonas de fauna.',watch:'TIEMPO DE VUELO',meaning:'Reduces la exposición de varios receptores, a costa de un margen operativo menor.'}
   };
+
+  const statesES=[
+   {tag:'ESTADO 1 · PLAN APROBADO',title:'Plan aprobado',plain:'La actividad se aprobó con la información disponible a las 14:00.',activity:'BAJA',overlap:'NINGUNO',meaning:'Las condiciones actuales todavía no exigen modificar el plan.',doNow:'Pulsa Mostrar alerta de fauna para conocer el siguiente cambio.'},
+   {tag:'ESTADO 2 · ALERTA DE FAUNA',title:'Nueva información disponible',plain:'A las 14:18 se detecta un aumento temporal de movimientos de fauna cerca del corredor aprobado.',activity:'ALTA',overlap:'POSIBLE',meaning:'El plan no ha fallado, pero la nueva información exige atención.',doNow:'Pulsa Mostrar conflicto para comprobar si la alerta afecta a la ruta.'},
+   {tag:'ESTADO 3 · CONFLICTO ACTIVO',title:'El plan entra en conflicto con las condiciones actuales',plain:'A las 14:25 la actividad de fauna se solapa con el corredor previsto para la operación.',activity:'ALTA',overlap:'ACTIVO',meaning:'Esta es la señal para evaluar otra respuesta: el plan original ya no puede ejecutarse sin revisarlo.',doNow:'Repasa cualquier estado si lo necesitas y pulsa Comparar respuestas.'}
+  ];
+  const windowsES={
+   early:{name:'Franja temprana',plain:'Deja el mayor margen operativo, pero todavía hay una actividad comunitaria próxima.',meaning:'Disponibilidad elevada, pero las molestias a la población son mayores en este horario.'},
+   buffer:{name:'Franja intermedia',plain:'La actividad comunitaria ha terminado, la interacción con la fauna sigue siendo baja y aún hay margen para el relevo.',meaning:'Este horario conserva la disponibilidad y reduce las molestias evitables.'},
+   late:{name:'Franja tardía',plain:'La operación termina antes del relevo, pero aumenta la sensibilidad nocturna de la población y queda poco margen de recuperación.',meaning:'Esperar más tiempo no garantiza mejores condiciones; algunas zonas se vuelven más sensibles.'}
+  };
+  const evidenceES=[
+   {title:'Registro de ruido',signal:'AUMENTA LA EXPOSICIÓN',headline:'El ruido percibido por los vecinos aumenta durante la actividad',detail:'En el escenario ficticio, el indicador pasa de 88,5 a 94,2 dB(A). Son valores relativos del juego, no un límite legal ni una conclusión de cumplimiento.',plain:'Ha cambiado la exposición de la población. El valor refleja una consecuencia, pero todavía no explica la causa.',short:'Aumenta la exposición'},
+   {title:'Actualización meteorológica',signal:'CAMBIA LA PROPAGACIÓN',headline:'El viento gira hacia la zona residencial R-05',detail:'Antes de la prueba cambia la dirección del viento. El modelo indica una mayor propagación del sonido hacia las viviendas.',plain:'Una misma fuente puede generar exposiciones diferentes según el viento. Hay que volver a comprobar el plan.',short:'Cambia el viento'},
+   {title:'Cronología de la operación',signal:'CAMBIA LA HORA REAL',headline:'La prueba comienza 20 minutos más tarde de lo previsto',detail:'La hora prevista era las 21:45. Un retraso técnico desplaza el inicio a las 22:05, dentro de una franja de mayor sensibilidad comunitaria en este escenario.',plain:'Cambian tanto el horario como la meteorología. La ejecución real ya no responde a las condiciones del plan original.',short:'Inicio retrasado'},
+   {title:'Registro de controles de ruido',signal:'FALTA LA COMPROBACIÓN FINAL',headline:'No consta una nueva comprobación justo antes de iniciar la actividad',detail:'El registro contiene el plan inicial, pero no confirma que se revisaran el viento, la hora real de inicio, la sensibilidad de los vecinos y la alerta activa antes de ejecutar la prueba.',plain:'El fallo controlable es claro: cambiaron las condiciones, pero no se volvió a validar el control de ruido.',short:'Falta la comprobación'}
+  ];
+  const auditsES=[
+   {title:'Control operacional',question:'¿Puedes demostrar cómo se controló una operación ruidosa obligatoria?',note:'La evidencia debe identificar el control aplicado, no limitarse a demostrar que se completó la tarea.',short:'Control de la operación'},
+   {title:'Control espacial y del hábitat',question:'¿Se consideraron varios receptores sensibles al elegir la ruta?',note:'Un control espacial sólido comprueba si la exposición se desplaza de la población hacia la fauna o viceversa.',short:'Control espacial'},
+   {title:'Respuesta a los cambios',question:'¿La nueva información ambiental modificó la respuesta operativa?',note:'El seguimiento es útil cuando los cambios detectados provocan una evaluación o adaptación.',short:'Control adaptativo'},
+   {title:'Control del horario',question:'¿Puedes justificar la franja horaria elegida con los datos disponibles?',note:'El registro debe vincular el momento de ejecución con la disponibilidad y la sensibilidad de los receptores.',short:'Evidencia del horario'},
+   {title:'Investigación del ruido y acción correctiva',question:'¿Puedes mostrar cómo se investigó y corrigió el fallo del control de ruido?',note:'Responder a la queja no basta: hay que documentar la causa, la deficiencia y la medida para evitar que se repita.',short:'Acción correctiva'}
+  ];
+  const spanishSelectedNames={
+   'Run now':'Ejecutar ahora','Delay 30 min':'Retrasar 30 minutos',
+   'Move to alternate test pad':'Trasladar a otra zona de pruebas',
+   'Direct Corridor':'Corredor directo','Eastern Diversion':'Desvío oriental','Buffer Arc':'Arco de separación',
+   'Continue as approved':'Continuar según lo aprobado',
+   'Hold 25 min and reassess':'Esperar 25 minutos y reevaluar',
+   'Switch to backup zone':'Cambiar a la zona alternativa',
+   'Early Window':'Franja temprana','Buffer Window':'Franja intermedia','Late Window':'Franja tardía',
+   'No Mission 01 decision recorded':'Sin decisión registrada en la misión 1',
+   'No Mission 02 route recorded':'Sin ruta registrada en la misión 2',
+   'No Mission 03 response recorded':'Sin respuesta registrada en la misión 3',
+   'No Mission 04 window recorded':'Sin horario registrado en la misión 4',
+   'No Mission 05 corrective action recorded':'Sin acción correctiva registrada en la misión 5',
+   'READY':'COMPLETA','PARTIAL':'PARCIAL','GAP':'DEFICIENCIA'
+  };
+  function setText(root,selector,text){const n=root.querySelector(selector);if(n)n.textContent=text}
+
   const replacementByMission={
     2(){
       const key=['a','b','c'][Math.max(0,Math.min(2,typeof routeReviewIndex2==='number'?routeReviewIndex2:0))],info=routeCopy[key];
@@ -107,6 +148,69 @@
       const meaning=panel.querySelector('.meaning');if(meaning)meaning.textContent='En otras palabras: '+info.meaning;
       const watch=panel.querySelector('.watch');if(watch)watch.textContent='ATENCIÓN: '+info.watch;
       const label=stage.querySelector('.route-label');if(label)label.textContent='RUTA '+key.toUpperCase()+' · '+info.name.toUpperCase();
+    },
+    3(){
+      const stage=document.querySelector('.readableMission'),p=stage?.querySelector('.m3-status');
+      if(!p)return;
+      const state=statesES[Math.max(0,Math.min(2,alertStep3))];
+      setText(stage,'.m3-map-title b',state.tag);
+      setText(stage,'.m3-map-title span','SEGUIMIENTO AMBIENTAL FICTICIO');
+      setText(p,'.ey',state.tag);setText(p,'h3',state.title);setText(p,'.plain',state.plain);
+      setText(p,'.meaning','¿QUÉ SIGNIFICA? '+state.meaning);
+      setText(p,'.do-now strong',state.doNow);
+      const k=p.querySelectorAll('.m3-kpi strong');if(k[0])k[0].textContent=state.activity;if(k[1])k[1].textContent=state.overlap;
+      const events=stage.querySelectorAll('.m3-event');
+      const names=['PLAN APROBADO','ALERTA DE FAUNA','CONFLICTO ACTIVO'];
+      events.forEach((e,i)=>{setText(e,'b',['14:00 · ESTADO 1','14:18 · ESTADO 2','14:25 · ESTADO 3'][i]);setText(e,'strong',names[i]);});
+      const next=stage.querySelector('#m3Next');
+      if(next)next.textContent=['MOSTRAR ALERTA DE FAUNA →','MOSTRAR CONFLICTO →','COMPARAR RESPUESTAS'][alertStep3];
+    },
+    4(){
+      const stage=document.querySelector('.readableMission'),p=stage?.querySelector('.m4-panel');
+      if(!p)return;
+      const keys=['early','buffer','late'],key=keys[Math.max(0,Math.min(2,windowStep4))],info=windowsES[key];
+      setText(p,'.ey','FRANJA '+String.fromCharCode(65+windowStep4)+' · ¿QUÉ OCURRE?');
+      setText(p,'h3',['20:30','22:00','23:30'][windowStep4]+' · '+info.name);
+      setText(p,'.plain',info.plain);
+      setText(p,'.meaning','En otras palabras: '+info.meaning);
+      setText(stage,'.m4-clock .label',info.name.toUpperCase());
+      stage.querySelectorAll('.m4-window').forEach((e,i)=>{setText(e,'small','FRANJA '+String.fromCharCode(65+i));setText(e,'span',['TEMPRANA','INTERMEDIA','TARDÍA'][i]);});
+    },
+    5(){
+      const stage=document.querySelector('.readableMission'),p=stage?.querySelector('.m5-status'),file=stage?.querySelector('.m5-file');
+      if(!p||!file)return;
+      const info=evidenceES[Math.max(0,Math.min(3,evidenceStep5))];
+      setText(file,'.m5-file-top small','EVIDENCIA '+String.fromCharCode(65+evidenceStep5));
+      setText(file,'.m5-file-top h3',info.title);
+      setText(file,'.m5-signal',info.signal);setText(file,'.m5-headline',info.headline);
+      setText(file,'.m5-detail',info.detail);setText(file,'.m5-tells strong',info.plain);
+      stage.querySelectorAll('.m5-evidence-btn').forEach((btn,i)=>{setText(btn,'strong',evidenceES[i].title);setText(btn,'span',evidenceES[i].short)});
+      setText(p,'.plain','La queja desencadena la investigación. ¿Por qué la exposición real al ruido de la zona residencial fue mayor que la prevista?');
+    },
+    6(){
+      const stage=document.querySelector('.readableMission'),panel=stage?.querySelector('.m6-panel'),file=stage?.querySelector('.m6-file');
+      if(!panel||!file)return;
+      const a=auditsES[Math.max(0,Math.min(4,auditStep6))];
+      setText(file,'.m6-file-top small','EXPEDIENTE '+String(auditStep6+1).padStart(2,'0')+' · EVIDENCIAS');
+      setText(file,'.m6-file-top h3',a.title);
+      setText(file,'.m6-question','PREGUNTA DEL AUDITOR');
+      setText(file,'.m6-answer',a.question);setText(file,'.m6-audit-note strong',a.note);
+      const record=file.querySelector('.m6-record');
+      if(record){
+        for(const node of [...record.childNodes]){
+          if(node.nodeType===Node.TEXT_NODE){
+            let value=node.nodeValue;
+            for(const [en,es] of Object.entries(spanishSelectedNames))value=value.split(en).join(es);
+            node.nodeValue=value;
+          }
+        }
+        setText(record,'strong','Registro de tu campaña:');
+      }
+      const badges={'READY':'COMPLETA','PARTIAL':'PARCIAL','GAP':'DEFICIENCIA'};
+      const status=stage.querySelector('.m6-status-badge');
+      if(status)status.textContent=badges[status.textContent.trim()]||status.textContent;
+      stage.querySelectorAll('.m6-file-btn').forEach((btn,i)=>{setText(btn,'small','EXPEDIENTE '+String(i+1).padStart(2,'0'));setText(btn,'strong',auditsES[i].title);setText(btn,'span',auditsES[i].short)});
+      setText(panel,'h3','Reúne las evidencias');
     }
   };
   function translateStage(root,mission){
