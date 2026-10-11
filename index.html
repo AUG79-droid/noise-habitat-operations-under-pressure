@@ -585,10 +585,16 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
  .guide-action{font-size:12px!important}
 }
 
+
+/* Optional readable zoom for screen-image text, shared with all clickable hotspots */
+body.readability-zoom #stage{display:block;overflow:auto;padding:18px;scrollbar-width:auto}
+body.readability-zoom #stage .screen{transform:scale(1.4);transform-origin:top left;margin:0;flex:none;max-width:none;max-height:none}
+#zoomBtn[aria-pressed="true"]{border-color:#ffbf5a;background:#21314a;color:#fff3d2}
+@media(max-width:760px){body.readability-zoom #stage{padding:10px}body.readability-zoom #stage .screen{transform:scale(1.55)}}
 </style>
 </head>
 <body>
-<nav class="appNav" id="appNav" aria-label="Mission navigation"><div class="appNavTitle" id="appNavTitle">Noise & Habitat · Mission 01</div><div class="appNavActions"><button id="navBack" class="navBtn" type="button">← Back</button><button id="navRestart" class="navBtn" type="button">↻ Restart</button><button id="navHome" class="navBtn" type="button">⌂ Home</button><button id="helpBtn" class="helpBtn" type="button" aria-label="How to play" title="How to play">? Help</button></div></nav>
+<nav class="appNav" id="appNav" aria-label="Mission navigation"><div class="appNavTitle" id="appNavTitle">Noise & Habitat · Mission 01</div><div class="appNavActions"><button id="navBack" class="navBtn" type="button">← Back</button><button id="navRestart" class="navBtn" type="button">↻ Restart</button><button id="navHome" class="navBtn" type="button">⌂ Home</button><button id="zoomBtn" class="navBtn" type="button" aria-pressed="false" title="Enlarge the game view">A+ Zoom</button><button id="helpBtn" class="helpBtn" type="button" aria-label="How to play" title="How to play">? Help</button></div></nav>
 <div id="stage"></div>
 <div id="guideHost" class="guideHost" aria-live="polite"></div>
 <div id="modalLayer" aria-modal="true" role="dialog"><div class="modal" id="modalCard"><button class="close" id="modalClose" aria-label="Close">×</button><div id="modalContent"></div></div></div>
@@ -1020,6 +1026,25 @@ function openOutcome2(key){if(!key)return;const c=routes2[key];modalCard.classNa
 
 function openHowToPlay(){if(current==='start'||current==='campaignIntro'){render('campaignIntro');return}const m=missionOf(current);if(String(current).startsWith('theory')){render('campaignIntro');return}m===6?openBriefing6(false):m===5?openBriefing5(false):m===4?openBriefing4(false):m===3?openBriefing3(false):m===2?openBriefing2(false):openBriefing1(false)}
 function openModal(){modalCard.scrollTop=0;modalLayer.classList.add('open')}function closeModal(){modalLayer.classList.remove('open')}document.getElementById('modalClose').onclick=closeModal;modalLayer.onclick=e=>{if(e.target===modalLayer)closeModal()};document.getElementById('helpBtn').onclick=openHowToPlay;navBack.onclick=goBack;navRestart.onclick=restartMission;navHome.onclick=goHome;
+const zoomButton=document.getElementById('zoomBtn');
+const zoomLang=new URLSearchParams(location.search).get('hubLang')==='es'?'es':'en';
+function updateZoomLabel(){
+ const active=document.body.classList.contains('readability-zoom');
+ zoomButton.setAttribute('aria-pressed',String(active));
+ zoomButton.textContent=active
+  ? (zoomLang==='es'?'A− Vista normal':'A− Normal view')
+  : (zoomLang==='es'?'A+ Ampliar':'A+ Enlarge');
+ zoomButton.setAttribute('aria-label',zoomLang==='es'
+  ? (active?'Restablecer tamaño de pantalla':'Ampliar pantalla del juego')
+  : (active?'Restore regular view':'Enlarge the game view'));
+}
+zoomButton.onclick=()=>{
+ document.body.classList.toggle('readability-zoom');
+ stage.scrollTop=0;stage.scrollLeft=0;
+ updateZoomLabel();
+};
+updateZoomLabel();
+
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),2400)}
 let resizeRAF=0;addEventListener('resize',()=>{cancelAnimationFrame(resizeRAF);resizeRAF=requestAnimationFrame(()=>render(current))});addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});render('start');
 </script>
