@@ -324,6 +324,49 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .screen-es-map .guide-focus{background:rgba(245,160,245,.06);border:3px solid #ffe3ff;box-shadow:0 0 0 2px rgba(245,160,245,.45),0 0 20px rgba(245,160,245,.55);animation:none}
 .screen-es-map .guide-hint{font:800 13px/1.45 ui-monospace,Consolas,monospace;max-width:265px;z-index:16}
 
+
+/* ES map/ground timeline, reconstructed to replace the hidden empty raster block. */
+.screen-es-map .esMapTimeline{
+  left:22.5%;right:2%;bottom:2%;height:15%;
+  display:flex;flex-direction:column;gap:6px;
+  padding:9px 13px;background:#0b1e31;overflow:hidden;
+  border:1px solid #468ca8;box-sizing:border-box;
+}
+.screen-es-map .esTimelineHeading{
+  display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  color:#70e2fc;font:800 clamp(11px,.85vw,14px)/1.2 ui-monospace,Consolas,monospace;
+  letter-spacing:.045em;white-space:normal;
+}
+.screen-es-map .esTimelineHeading span{color:#e0ebf3;font-weight:700;white-space:nowrap}
+.screen-es-map .esTimelineTrack{display:flex;width:100%;height:7px;min-height:7px;border-radius:2px;overflow:hidden}
+.screen-es-map .esTimelineSegment{height:100%;display:block}
+.screen-es-map .esTimelineEarly{width:33.333%;background:#40d1ed}
+.screen-es-map .esTimelineMiddle{width:33.333%;background:#ed97ed}
+.screen-es-map .esTimelineLate{width:33.334%;background:#ffc05a}
+.screen-es-map .esTimelineTimes{
+  display:flex;justify-content:space-between;align-items:center;gap:2px;
+  color:#c7d9e7;font:700 clamp(10px,.75vw,12px)/1.2 ui-monospace,Consolas,monospace;
+}
+.screen-es-map .esTimelineOperation{
+  display:flex;align-items:center;gap:7px;min-width:0;
+  color:#e7f3fd;font:500 clamp(11px,.85vw,14px)/1.35 system-ui,sans-serif;
+  background:#163349;border-left:3px solid #e9a0e7;padding:6px 9px;
+  overflow-wrap:anywhere;
+}
+.screen-es-map .esTimelineOperation strong{
+  font:800 clamp(11px,.78vw,13px)/1.25 ui-monospace,Consolas,monospace;
+  color:#fff;white-space:nowrap;
+}
+.screen-es-map .esTimelineOperation span:last-child{flex:1;color:#d3e5f3}
+.screen-es-map .esTimelineOperationDot{
+  flex:none;display:inline-block;width:8px;height:8px;background:#ffc05a;border-radius:50%;
+}
+@media(max-width:850px){
+ .screen-es-map .esMapTimeline{gap:3px;padding:6px 8px}
+ .screen-es-map .esTimelineOperation{padding:4px 6px;gap:4px;line-height:1.2}
+ .screen-es-map .esTimelineOperation span:last-child{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -692,7 +735,12 @@ function addSpanishStaticUi(shell,name){
         <p>La exposición al ruido cambia según el viento, la hora y el lugar de ejecución.</p>
         <div class="esNextStep"><strong>QUÉ HACER AHORA</strong><p>${nextStep}</p></div>
       </section>
-      <section class="esPanel esMapTimeline"><small>CRONOLOGÍA TÁCTICA · 06:00–24:00</small><div class="bar"></div></section>
+      <section class="esPanel esMapTimeline" aria-label="Cronología táctica de 06:00 a 24:00">
+        <div class="esTimelineHeading">CRONOLOGÍA TÁCTICA <span>06:00–24:00</span></div>
+        <div class="esTimelineTrack" aria-hidden="true"><span class="esTimelineSegment esTimelineEarly"></span><span class="esTimelineSegment esTimelineMiddle"></span><span class="esTimelineSegment esTimelineLate"></span></div>
+        <div class="esTimelineTimes" aria-hidden="true"><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>24:00</span></div>
+        <div class="esTimelineOperation"><span class="esTimelineOperationDot" aria-hidden="true"></span><strong>GR-774A · PRUEBA DE MOTOR</strong><span>Puede retrasarse 30 min sin cancelar la operación.</span></div>
+      </section>
     `);
   }
   if(name.startsWith('complete')){
