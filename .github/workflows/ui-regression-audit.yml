@@ -6,6 +6,7 @@ on:
       - index.html
       - localization.js
       - accessible-missions.js
+      - modal-es.js
       - accessible-missions.css
       - .github/workflows/ui-regression-audit.yml
 jobs:
