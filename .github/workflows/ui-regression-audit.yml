@@ -50,6 +50,15 @@ jobs:
                     const a={screen,current,completion:!!done,course:!!pageEl,hasScreen:!!screenEl};
                     if(done){a.heading=$('.completionHeading')?.textContent;a.cta=$('.completionButton')?.textContent;a.duplicateOld=!!$('.esCompleteMain');a.cardCount=all('.completionCard').length;
                       a.cardOverflow=all('.completionCard').filter(x=>x.scrollWidth>x.clientWidth+4).length}
+                    if(/^map[2-6]$/.test(screen)){
+                      const container=$('.readableMission');
+                      a.readableLayout=!!container;
+                      a.layoutChildren=container?.children.length||0;
+                      const paras=[...container?.querySelectorAll('h3,p,.plain,.meaning,.m2-bottom-copy span,.m2-bottom-copy strong')||[]];
+                      a.minBodyFont=paras.length?Math.min(...paras.map(x=>parseFloat(getComputedStyle(x).fontSize))):null;
+                      a.readableScrollable=!!container && container.scrollHeight>=container.clientHeight;
+                      a.visibleActions=[...container?.querySelectorAll('button:not(:disabled)')||[]].filter(x=>x.getBoundingClientRect().width>0).length;
+                    }
                     if(screen==='map1'&&location.search.includes('hubLang=es')){
                       a.timelineHours=all('.esTimelineTimes span').map(e=>e.textContent);a.warn=!!$('.esMapCond .warn');
                       a.warnColor=$('.esMapCond .warn')?getComputedStyle($('.esMapCond .warn')).backgroundColor:'';
@@ -65,6 +74,7 @@ jobs:
                   if(screen.startsWith('complete')&&(!result.completion||result.duplicateOld||result.cardCount!==2))errors.push(locale+'/'+size.label+'/'+screen+' completion invalid '+JSON.stringify(result));
                   if(screen==='map1'&&locale==='es'&&result.timelineHours?.length!==7)errors.push(locale+'/'+size.label+'/map1 missing timeline');
                   if(result.tinyButtons>0)errors.push(locale+'/'+size.label+'/'+screen+' tiny buttons '+result.tinyButtons);
+                  if(/^map[2-6]$/.test(screen)&&(!result.readableLayout||result.layoutChildren<6||result.visibleActions<3))errors.push(locale+'/'+size.label+'/'+screen+' readable-stage not installed '+JSON.stringify(result));
                   if(size.label==='desktop')await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'}).catch(async()=>{fs.mkdirSync('screens',{recursive:true});await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'});});
 
                   if(size.label==='desktop'&&/^(map|ground|complete)[1-6]$/.test(screen)){
