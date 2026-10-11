@@ -391,6 +391,20 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .completionButton:hover,.completionButton:focus-visible{filter:brightness(1.13);outline:2px solid #ffe7ab;outline-offset:2px}
 @media(max-width:650px){.completionScreen{padding:18px 14px}.completionGrid{grid-template-columns:1fr}.completionLead{font-size:16px}.completionFooter{align-items:stretch}.completionButton{width:100%}}
 
+
+/* Spanish mission 01 sidebar and text flow correction */
+.esStaticUi{line-height:1.42}
+.esStaticSide{overflow:hidden}
+.esStaticSide .op{display:block;line-height:1.35}
+.esStaticSide .rank{display:block;line-height:1.4;margin-top:7px}
+.esStaticSide nav{margin-top:25%;gap:13px;line-height:1.5}
+.esStaticSide nav div{display:block;line-height:1.4}
+.esStaticSide .deploy{line-height:1.3;font-size:clamp(10px,1vw,14px);height:5.3%;min-height:32px;text-align:center}
+.screen-es-map .esMapCond{height:70%;line-height:1.4}
+.screen-es-map .esNextStep{padding:7px 10px;margin-top:8px}
+.screen-es-map .esNextStep p{margin:2px 0;line-height:1.4;font-size:clamp(11px,.9vw,13px)}
+.screen-es-map .esMapCond .warn{margin:10px 0}
+
 </style>
 </head>
 <body>
@@ -740,8 +754,8 @@ function addSpanishStaticUi(shell,name){
   layer.innerHTML=`<div class="esStaticTop">CONTROL DE MISIÓN</div><aside class="esStaticSide"><div class="op">OPERATIVO_01</div><div class="rank">RANGO: COMANDANTE</div><nav><div>▧ MAPA</div><div>▤ BRIEFING</div><div>▥ INFORMACIÓN</div><div>♜ LOGROS</div></nav><div class="deploy">DESPLEGAR EQUIPO</div></aside>`;
   if(name==='map1'||name==='ground1'){
     const nextStep=name==='map1'
-      ? 'Selecciona PRUEBA EN TIERRA para revisar el conflicto y comparar las opciones.'
-      : 'Compara ejecutar la prueba ahora, retrasarla treinta minutos o cambiar la zona antes de desplegar el equipo.';
+      ? 'Selecciona PRUEBA EN TIERRA.'
+      : 'Compara las tres opciones antes de desplegar el equipo.';
     layer.insertAdjacentHTML('beforeend',`
       <section class="esPanel esMapOps">
         <small>OPERACIONES DISPONIBLES</small>
