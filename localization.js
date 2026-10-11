@@ -435,7 +435,11 @@
 
   function localise(root) {
     if (language !== "es") return;
+    // Never machine-translate a component authored natively in Spanish.
+    const authored = element => !!element?.closest?.(".completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint");
+    if (root.nodeType === Node.ELEMENT_NODE && authored(root)) return;
     root.querySelectorAll?.("p,h1,h2,h3").forEach(element => {
+      if (authored(element)) return;
       const compact = element.textContent.replace(/\s+/g, " ").trim();
       if (exact.has(compact)) element.textContent = exact.get(compact);
     });
@@ -443,7 +447,7 @@
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node => {
-      if (node.parentElement && !node.parentElement.closest("script,style,noscript")) node.nodeValue = translate(node.nodeValue);
+      if (node.parentElement && !node.parentElement.closest("script,style,noscript") && !authored(node.parentElement)) node.nodeValue = translate(node.nodeValue);
     });
     root.querySelectorAll?.("[aria-label],[title],[placeholder]").forEach(element => {
       ["aria-label", "title", "placeholder"].forEach(attribute => {
@@ -479,7 +483,7 @@
   if (language === "es") {
     new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => {
       if (node.nodeType === Node.ELEMENT_NODE) localise(node);
-      else if (node.nodeType === Node.TEXT_NODE && node.parentElement && !node.parentElement.closest("script,style,noscript")) node.nodeValue = translate(node.nodeValue);
+      else if (node.nodeType === Node.TEXT_NODE && node.parentElement && !node.parentElement.closest("script,style,noscript,.completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint")) node.nodeValue = translate(node.nodeValue);
     }))).observe(document.body, { childList: true, subtree: true });
   }
 })();
