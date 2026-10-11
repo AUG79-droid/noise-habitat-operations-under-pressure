@@ -225,9 +225,67 @@ function localizeSupporting(root){
  return true;
 }
 
+
+const outcomeES={
+ 1:{
+  now:['Ejecutar ahora','Se completa la prueba obligatoria de inmediato. Se mantiene la máxima disponibilidad, pero el viento sigue dirigiendo más ruido hacia receptores sensibles.','No se ha modificado ninguna condición de la operación. El requisito se cumple, pero persiste la exposición evitable.','Completar una tarea no equivale a controlar sus consecuencias ambientales.'],
+  delay:['Retrasar 30 minutos','La prueba se retrasa 30 minutos sin incumplir el plazo operativo. En este escenario, unas condiciones meteorológicas algo más favorables reducen la exposición.','Cambias cuándo se ejecuta la prueba, no si se ejecuta. Se mantiene la disponibilidad y disminuyen las molestias evitables.','El horario puede ser una medida ambiental de control.'],
+  move:['Trasladar la zona de pruebas','La prueba se realiza lejos de las viviendas, pero la zona alternativa está más próxima al hábitat sensible H-02.','La operación se completa, aunque parte de las molestias se traslada a otro receptor. Hay que considerar todos los afectados.','Resolver un problema ambiental puede crear otro si solo se analiza un receptor.']
+ },
+ 2:{
+  a:['Ruta A · Corredor directo','El vuelo se completa con máximo margen temporal, pero los pasos repetidos concentran el ruido cerca de la zona residencial R-02.','Solo has optimizado la distancia de vuelo. La planificación debe tener en cuenta qué personas y hábitats quedan próximos a la ruta.','La ruta más corta puede concentrar molestias en una zona sensible.'],
+  b:['Ruta B · Desvío oriental','Disminuye la exposición de los vecinos, pero la ruta atraviesa el humedal H-03 y el corredor de aves B-04.','Se resuelve parte del problema residencial, pero la exposición se traslada al hábitat sensible.','Alejar el ruido de las viviendas no garantiza una mejora global.'],
+  c:['Ruta C · Arco de separación','La ruta es algo más larga, pero evita las zonas de mayor sensibilidad de la población y la fauna.','Aceptas una pequeña pérdida de eficiencia para reducir el solapamiento con varios receptores.','La planificación espacial puede reducir molestias sin cancelar la misión.']
+ },
+ 3:{
+  proceed:['Continuar según lo aprobado','Se mantiene el programa inicial y el margen operativo máximo, pero se ignora una alerta temporal de fauna activa.','El plan era aceptable cuando se aprobó; al cambiar las condiciones, debió revisarse el control.','Un plan aprobado puede dejar de ser adecuado si cambian las condiciones.'],
+  hold:['Esperar 25 minutos y reevaluar','La actividad se retrasa brevemente dentro de la ventana prevista. La actividad temporal de fauna disminuye y se vuelve a comprobar el riesgo.','Utilizas el tiempo como control adaptativo sin cancelar la actividad.','El seguimiento ambiental solo aporta valor cuando puede modificar la decisión.'],
+  backup:['Cambiar a la zona alternativa','La operación se aleja de la zona de fauna, pero se aproxima a un receptor residencial.','La alternativa reduce un conflicto, aunque requiere comprobar si genera molestias en otro lugar.','Una contingencia necesita evaluar sus propios receptores sensibles.']
+ },
+ 4:{
+  early:['20:30 · Franja temprana','La validación se completa pronto y conserva el mayor margen operativo, pero coincide con una sensibilidad comunitaria elevada.','Se ha priorizado únicamente el margen horario. Las condiciones del entorno también importan.','La primera franja disponible no tiene por qué generar menos molestias.'],
+  buffer:['22:00 · Franja intermedia','La actividad se completa antes del relevo, después de que disminuya la sensibilidad comunitaria.','Se modifica el momento de ejecución, conservando margen operativo y reduciendo molestias evitables.','El horario puede funcionar como control ambiental y operativo.'],
+  late:['23:30 · Franja tardía','La actividad termina cerca del relevo. Aumenta la sensibilidad de la población y queda poco margen ante imprevistos.','Esperar más no garantiza un resultado mejor: deben evaluarse las condiciones reales de esa franja.','Un retraso solo resulta útil si las condiciones posteriores son favorables.']
+ },
+ 5:{
+  close:['Responder a la queja sin modificar el procedimiento','La comunidad recibe una respuesta, pero futuras operaciones pueden seguir aplicando un plan de ruido desactualizado.','La medida atiende la consecuencia después del episodio, pero no corrige la deficiencia previa a la ejecución.','Responder a una queja no mejora por sí solo el control operacional.'],
+  ban:['Prohibir las validaciones nocturnas','Desaparecen muchos episodios de ruido nocturno, pero se reduce drásticamente la flexibilidad y disponibilidad de la misión.','Las evidencias justifican actualizar el control, no prohibir de forma general todas las operaciones nocturnas.','La medida correctiva debe ser proporcionada.'],
+  recheck:['Comprobación obligatoria antes de ejecutar','Antes del inicio se verifican el viento, la hora real, la sensibilidad de los vecinos y las alertas de ruido, y se documenta la reevaluación.','Esta medida corrige directamente el fallo identificado y conserva la posibilidad de realizar la operación cuando las condiciones lo permiten.','El control del ruido debe adaptarse a las condiciones reales.']
+ }
+};
+function localizeOutcome(root){
+ const finish=root.querySelector('[id^="finish"]');
+ const id=finish?Number(finish.id.replace('finish','')):null;
+ if(!id||id<1||id>5)return false;
+ const keys=[
+  null,
+  typeof selectedChoice1==='undefined'?null:selectedChoice1,
+  typeof selectedRoute2==='undefined'?null:selectedRoute2,
+  typeof selectedResponse3==='undefined'?null:selectedResponse3,
+  typeof selectedWindow4==='undefined'?null:selectedWindow4,
+  typeof selectedAction5==='undefined'?null:selectedAction5
+ ];
+ const key=keys[id],record=outcomeES[id]?.[key];
+ if(!record)return false;
+ set(root,'.eyebrow','MISIÓN '+String(id).padStart(2,'0')+' · RESULTADO DE TU DECISIÓN');
+ set(root,'h2',record[0]);set(root,'.lead','La operación obligatoria se ha completado. Revisa las consecuencias de la medida elegida.');
+ set(root,'.scorePanel .status','RESULTADO DE LA MISIÓN · COMPRUEBA LAS CONSECUENCIAS');
+ set(root,'.scorePanel h3','¿QUÉ HA OCURRIDO?');
+ set(root,'.scorePanel > p',record[1]);
+ set(root,'.whyBox small','¿POR QUÉ?');set(root,'.whyBox p',record[2]);
+ set(root,'.learnPanel .unlock','APRENDIZAJE DE SOSTENIBILIDAD');
+ set(root,'.learnPanel h3',record[3]);
+ set(root,'.learnPanel > p','Evalúa siempre la operación y sus efectos sobre los receptores sensibles, manteniendo el requisito de disponibilidad.');
+ set(root,'.takeaway','Recuerda: una decisión debe justificarse con las condiciones y evidencias disponibles.');
+ finish.textContent='FINALIZAR MISIÓN '+String(id).padStart(2,'0');
+ badges(root);
+ return true;
+}
+
 function localize(root){
  if(!es||!root)return;
  if(decision(root))return;
+ if(localizeOutcome(root))return;
  if(localizeSupporting(root))return;
  const mapTitles={
  'Mission 01 · Quick Intel':['MISIÓN 01 · INFORMACIÓN','La prueba de motor y sus condiciones'],
