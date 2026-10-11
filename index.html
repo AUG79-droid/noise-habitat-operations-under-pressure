@@ -644,6 +644,13 @@ const spanishGuideHints={
 };
 function addGuideHint(shell,step,s,screenName,stepIndex){
  if(!step||!step.focus)return;
+ const readable=shell.querySelector('.readableMission');
+ if(readable){
+   const first=readable.querySelector('[class$="-goal"]');
+   const last=readable.querySelector('[class$="-bottom"],.m2-bottom-simple,.m3-timeline');
+   const focus=(stepIndex===0?first:last)||first;
+   if(focus){focus.classList.add('readableGuided');return;}
+ }
  const localized=ariaSpanishSelected&&shell.classList.contains('screen-es-map');
  const targetSelector=localized ? ({
    map1:['.esMapOps .row:first-of-type','.esMapCond .warn','.esMapTimeline','.esMapOps .row:first-of-type'],
