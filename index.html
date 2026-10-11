@@ -510,8 +510,55 @@ function speakGuide(text){
   }else speakWithAvailableVoice();
 }
 
-function addGuideHint(shell,step,s){if(!step||!step.focus)return;const r=rectPct(...step.focus,s.w,s.h);const f=document.createElement('div');f.className='guide-focus';Object.assign(f.style,{left:r.left+'%',top:r.top+'%',width:r.width+'%',height:r.height+'%'});shell.appendChild(f);if(step.hint){const h=document.createElement('div');h.className='guide-hint'+(step.hintSide==='right'?' arrow-right':'');h.innerHTML=step.hint;h.style.left=(step.hintPos?.[0]||50)+'%';h.style.top=(step.hintPos?.[1]||50)+'%';shell.appendChild(h)}}
-function addAvatarGuide(shell,screenName,s){const script=guideScripts[screenName];if(!script)return;if(!guideOpen){const mini=document.createElement('button');mini.className='guide-minibtn';mini.title='Open ARIA guide';mini.onclick=()=>{guideOpen=true;render(screenName)};shell.appendChild(mini);return}const idx=Math.min(guideSteps[screenName]||0,script.length-1),step=script[idx];const displayedGuideText=ariaSpanishSelected?(ariaSpanishGuideText[screenName]?.[idx]||step.text):step.text;addGuideHint(shell,step,s);const dots=script.map((_,i)=>`<span class="guide-dot ${i===idx?'active':''}"></span>`).join('');guideHost.innerHTML='';const dock=document.createElement('div');dock.className='guide-dock';dock.innerHTML=`<button class="guide-close" aria-label="Hide mission guide">×</button><div class="guide-avatar"><div class="portrait-window"><img src="${ARIA_AVATAR}" alt="ARIA mission guide"></div><span class="guide-online"></span></div><div class="guide-copy"><div class="guide-meta">${step.meta}</div><div class="guide-message">${displayedGuideText}</div><div class="guide-progress">${dots}</div></div><div class="guide-actions"><button class="guide-action secondary" data-guide="speak">LISTEN</button>${idx>0?'<button class="guide-action secondary" data-guide="back">BACK</button>':''}<button class="guide-action" data-guide="next">${step.cta||(idx===script.length-1?'GOT IT':'NEXT')}</button></div>`;dock.querySelector('.guide-close').onclick=()=>{guideOpen=false;render(screenName)};dock.querySelector('[data-guide="speak"]').onclick=()=>speakGuide(displayedGuideText);const b=dock.querySelector('[data-guide="back"]');if(b)b.onclick=()=>{guideSteps[screenName]=Math.max(0,idx-1);render(screenName)};dock.querySelector('[data-guide="next"]').onclick=()=>{if(step.action){step.action();return}if(idx<script.length-1){guideSteps[screenName]=idx+1;render(screenName)}else{guideOpen=false;render(screenName)}};guideHost.appendChild(dock)}
+const spanishGuideHints={
+ map1:[
+ '<b>Empieza aquí:</b> selecciona la prueba de motor en tierra.',
+ '<b>Revisa la alerta rosa:</b> señala un conflicto de ruido que debes controlar.',
+ '<b>Comprueba la cronología:</b> puedes ajustar el horario sin incumplir el plazo.',
+ '<b>Continúa aquí:</b> selecciona la prueba en tierra.'
+ ],
+ ground1:[
+ '<b>Esta es la alerta rosa</b> que debes gestionar antes de actuar.',
+ '<b>Conflicto detectado:</b> compara los controles antes de desplegar el equipo.',
+ '<b>Desplegar equipo:</b> continúa para revisar las tres opciones.'
+ ]
+};
+function addGuideHint(shell,step,s,screenName,stepIndex){
+ if(!step||!step.focus)return;
+ const localized=ariaSpanishSelected&&shell.classList.contains('screen-es-map');
+ const targetSelector=localized ? ({
+   map1:['.esMapOps .row:first-of-type','.esMapCond .warn','.esMapTimeline','.esMapOps .row:first-of-type'],
+   ground1:['.esMapCond .warn','.esMapCond .warn','.esStaticSide .deploy']
+ }[screenName]||[])[stepIndex] : null;
+ const target=targetSelector?shell.querySelector(targetSelector):null;
+ let r=rectPct(...step.focus,s.w,s.h);
+ if(target){
+   const t=target.getBoundingClientRect(),base=shell.getBoundingClientRect();
+   r={left:100*(t.left-base.left)/base.width,top:100*(t.top-base.top)/base.height,width:100*t.width/base.width,height:100*t.height/base.height};
+ }
+ const focus=document.createElement('div');focus.className='guide-focus';
+ Object.assign(focus.style,{left:r.left+'%',top:r.top+'%',width:r.width+'%',height:r.height+'%'});
+ shell.appendChild(focus);
+ const hintText=localized?(spanishGuideHints[screenName]?.[stepIndex]||step.hint):step.hint;
+ if(hintText){
+  const hint=document.createElement('div');
+  hint.className='guide-hint'+(step.hintSide==='right'?' arrow-right':'');
+  hint.innerHTML=hintText;
+  if(target){
+    let x=r.left>55?r.left-22:r.left+r.width+2;
+    let y=r.top+Math.min(3,r.height/2);
+    if(targetSelector==='.esMapTimeline'){x=33;y=r.top-11}
+    if(targetSelector==='.esStaticSide .deploy'){x=23;y=r.top-8}
+    hint.style.left=Math.max(1,Math.min(75,x))+'%';
+    hint.style.top=Math.max(7,Math.min(82,y))+'%';
+  }else{
+    hint.style.left=(step.hintPos?.[0]||50)+'%';
+    hint.style.top=(step.hintPos?.[1]||50)+'%';
+  }
+  shell.appendChild(hint);
+ }
+}
+function addAvatarGuide(shell,screenName,s){const script=guideScripts[screenName];if(!script)return;if(!guideOpen){const mini=document.createElement('button');mini.className='guide-minibtn';mini.title='Open ARIA guide';mini.onclick=()=>{guideOpen=true;render(screenName)};shell.appendChild(mini);return}const idx=Math.min(guideSteps[screenName]||0,script.length-1),step=script[idx];const displayedGuideText=ariaSpanishSelected?(ariaSpanishGuideText[screenName]?.[idx]||step.text):step.text;addGuideHint(shell,step,s,screenName,idx);const dots=script.map((_,i)=>`<span class="guide-dot ${i===idx?'active':''}"></span>`).join('');guideHost.innerHTML='';const dock=document.createElement('div');dock.className='guide-dock';dock.innerHTML=`<button class="guide-close" aria-label="Hide mission guide">×</button><div class="guide-avatar"><div class="portrait-window"><img src="${ARIA_AVATAR}" alt="ARIA mission guide"></div><span class="guide-online"></span></div><div class="guide-copy"><div class="guide-meta">${step.meta}</div><div class="guide-message">${displayedGuideText}</div><div class="guide-progress">${dots}</div></div><div class="guide-actions"><button class="guide-action secondary" data-guide="speak">LISTEN</button>${idx>0?'<button class="guide-action secondary" data-guide="back">BACK</button>':''}<button class="guide-action" data-guide="next">${step.cta||(idx===script.length-1?'GOT IT':'NEXT')}</button></div>`;dock.querySelector('.guide-close').onclick=()=>{guideOpen=false;render(screenName)};dock.querySelector('[data-guide="speak"]').onclick=()=>speakGuide(displayedGuideText);const b=dock.querySelector('[data-guide="back"]');if(b)b.onclick=()=>{guideSteps[screenName]=Math.max(0,idx-1);render(screenName)};dock.querySelector('[data-guide="next"]').onclick=()=>{if(step.action){step.action();return}if(idx<script.length-1){guideSteps[screenName]=idx+1;render(screenName)}else{guideOpen=false;render(screenName)}};guideHost.appendChild(dock)}
 
 
 const campaignOverview=[
