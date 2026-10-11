@@ -137,3 +137,11 @@
  .readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal){min-height:0!important}
  .readableMission > :is(.m2-bottom-simple,.m3-timeline,.m4-bottom,.m5-bottom,.m6-bottom){min-height:0!important}
 }
+
+/* ARIA guidance highlights the visible, readable element, not an obsolete pixel rectangle */
+.readableMission .readableGuided{
+ border:2px solid #ffd080!important;
+ outline:2px solid rgba(255,208,128,.35);
+ outline-offset:3px;
+ box-shadow:0 0 24px rgba(255,208,128,.28)!important;
+}
