@@ -89,3 +89,51 @@
  .readableMission .m3-track,.readableMission .m4-timeline,.readableMission .m5-track,.readableMission .m6-track{overflow-x:auto}
  .readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal){flex-direction:column;align-items:flex-start}
 }
+
+/* Layout QA second pass: content-sized heading and controls never overflow cards */
+.readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal){
+ min-height:132px!important;max-height:none!important;align-items:flex-start!important;
+ padding:18px 20px!important;overflow:visible!important;
+}
+.readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal)>div:first-child{
+ min-width:0!important;max-width:100%!important;display:flex;flex-direction:column;gap:5px;
+}
+.readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal)>div:first-child strong{
+ font-size:18px!important;line-height:1.35!important;max-width:none!important;
+}
+.readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal)>div:first-child span{
+ max-width:none!important;font-size:15px!important;line-height:1.55!important;
+}
+.readableMission > :is(.m2-bottom-simple,.m3-timeline,.m4-bottom,.m5-bottom,.m6-bottom){
+ min-height:164px!important;align-items:start!important;overflow:visible!important;
+}
+.readableMission :is(.m2-bottom-copy,.m3-actions,.m4-actions,.m5-actions,.m6-actions){
+ min-width:0!important;align-self:start!important;line-height:1.6!important;
+}
+.readableMission .m2-bottom-copy{display:flex;flex-direction:column;gap:4px}
+.readableMission .m2-bottom-copy span{display:block;font-size:15px!important;line-height:1.6!important;max-width:none!important}
+.readableMission .m2-bottom-actions{align-self:start!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.readableMission .m2-bottom-actions button{font-size:14px!important;min-height:46px!important}
+.readableMission .m2-route-panel{max-height:480px!important;overflow-y:auto!important}
+.readableMission .m2-route-panel .ey{font-size:14px!important;letter-spacing:.04em}
+.readableMission .m2-route-panel .meaning{font-size:16px!important;line-height:1.55!important}
+.readableMission .m2-map-title{align-items:center;gap:6px}
+.readableMission .m2-map-title b,.readableMission .m2-map-title span{font-size:12px!important;line-height:1.4!important}
+.readableMission .m2-marker,.readableMission .route-label{font-size:13px!important;line-height:1.35!important}
+.readableMission .m4-clock small,.readableMission .m4-clock .label,.readableMission .m4-clock .deadline{
+ font-size:13px!important;line-height:1.45!important;
+}
+.readableMission .m4-receptor{min-height:0!important;padding:12px!important}
+.readableMission .m4-receptor small,.readableMission .m4-receptor strong,.readableMission .m4-receptor .signal{
+ font-size:13px!important;line-height:1.45!important;
+}
+.readableMission .m4-receptors{overflow-y:auto!important;scrollbar-width:thin;min-height:0!important}
+.readableMission .m3-event,.readableMission .m4-window,
+.readableMission .m5-evidence-btn,.readableMission .m6-file-btn{min-height:84px!important}
+.readableMission .m3-track,.readableMission .m4-timeline,
+.readableMission .m5-track,.readableMission .m6-track{overflow-x:auto;scrollbar-width:thin}
+.readableMission :is(.m4-panel,.m5-status,.m6-panel){max-height:520px!important;overflow-y:auto!important}
+@media(max-width:870px){
+ .readableMission > :is(.m2-goal,.m3-goal,.m4-goal,.m5-goal,.m6-goal){min-height:0!important}
+ .readableMission > :is(.m2-bottom-simple,.m3-timeline,.m4-bottom,.m5-bottom,.m6-bottom){min-height:0!important}
+}
