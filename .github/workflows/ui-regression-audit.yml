@@ -66,6 +66,33 @@ jobs:
                   if(screen==='map1'&&locale==='es'&&result.timelineHours?.length!==7)errors.push(locale+'/'+size.label+'/map1 missing timeline');
                   if(result.tinyButtons>0)errors.push(locale+'/'+size.label+'/'+screen+' tiny buttons '+result.tinyButtons);
                   if(size.label==='desktop')await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'}).catch(async()=>{fs.mkdirSync('screens',{recursive:true});await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'});});
+
+                  if(size.label==='desktop'&&/^(map|ground|complete)[1-6]$/.test(screen)){
+                    const steps=await page.evaluate(screen=>guideScripts[screen]?.length||0,screen);
+                    for(let i=0;i<steps;i++){
+                      await page.evaluate(({screen,i})=>{guideOpen=true;guideSteps[screen]=i;render(screen);},{screen,i});
+                      await page.waitForTimeout(80);
+                      const audit=await page.evaluate(()=>{
+                        const dock=document.querySelector('.guide-dock');
+                        const actions=[...document.querySelectorAll('.guide-actions .guide-action')];
+                        const rect=(e)=>e.getBoundingClientRect();
+                        const collide=(a,b)=>{const x=rect(a),y=rect(b);return x.right>y.left&&y.right>x.left&&x.bottom>y.top&&y.bottom>x.top};
+                        let collisions=0;for(let k=0;k<actions.length;k++)for(let j=k+1;j<actions.length;j++)if(collide(actions[k],actions[j]))collisions++;
+                        return {visible:!!dock,buttons:actions.length,collisions,message:!!document.querySelector('.guide-message')};
+                      });
+                      if(!audit.visible||audit.collisions||!audit.message)errors.push(locale+'/'+screen+'/guide'+(i+1)+' invalid '+JSON.stringify(audit));
+                      await page.screenshot({path:'screens/'+locale+'-'+screen+'-guide-'+(i+1)+'.png'});
+                    }
+                  }
+                  if(size.label==='desktop'&&/^map[1-6]$/.test(screen)){
+                    await page.evaluate((screen)=>{guideOpen=false;render(screen);const m=Number(screen.slice(-1));window['openBriefing'+m](false);},screen);
+                    await page.waitForTimeout(100);
+                    const modalInfo=await page.evaluate(()=>({visible:document.getElementById('modalLayer').classList.contains('open'),heading:document.querySelector('.modal h2')?.textContent}));
+                    if(!modalInfo.visible)errors.push(locale+'/'+screen+'/briefing dialog missing');
+                    await page.screenshot({path:'screens/'+locale+'-'+screen+'-briefing.png'});
+                    await page.evaluate(()=>closeModal());
+                  }
+
                 }
                 await page.close();
               }
