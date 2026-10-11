@@ -413,24 +413,18 @@
   }));
 
   function translate(value) {
-    const compact = value.replace(/\s+/g, " ").trim();
+    // Translate only known complete sentences or curated UI labels.
+    // Token-by-token substitution created unintelligible Spanish (e.g. "tú han ahora seen").
+    const compact=value.replace(/\s+/g," ").trim();
     if (!compact) return value;
-    let result = exact.get(compact) || compact;
-    if (result === compact) {
-      for (const [source, target] of [...exact.entries()].sort((a, b) => b[0].length - a[0].length)) {
-        if (source.length > 5 && result.includes(source)) result = result.split(source).join(target);
-      }
+    const exactMatch=exact.get(compact);
+    if (exactMatch!==undefined) return value.match(/^\s*/)[0]+exactMatch+value.match(/\s*$/)[0];
+    // Avoid inventing machine-like partial sentences. Curated strings are translated
+    // in their component-specific localization layer.
+    for(const [from,to] of phrases){
+       if(compact===from) return value.match(/^\s*/)[0]+to+value.match(/\s*$/)[0];
     }
-    if (result === compact) for (const [from, to] of phrases) result = result.split(from).join(to);
-    if (result === compact && /\b(?:the|this|that|with|without|from|into|while|when|where|which|what|why|how|your|you|they|their|should|would|could|must|is|are|was|were|has|have|had|not|and|or|of|to|in|on|at|by|for)\b/i.test(compact)) {
-      result = compact.replace(/\b[A-Za-z][A-Za-z’-]*\b/g, token => {
-        const translated = words.get(token.toLowerCase());
-        if (!translated) return token;
-        return token === token.toUpperCase() ? translated.toUpperCase() : translated;
-      });
-    }
-    if (result === compact) return value;
-    return value.match(/^\s*/)[0] + result + value.match(/\s*$/)[0];
+    return value;
   }
 
   function localise(root) {
