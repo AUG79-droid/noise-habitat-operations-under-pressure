@@ -299,6 +299,31 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
  .coursePage .courseActions>div:last-child{display:flex;flex-wrap:wrap}
 }
 
+
+/* Mission 01 ES HUD: hide baked-in English legends without dimming interactive signals */
+.screen-es-map .esPanel{background:#07182b;border-color:#3b6b87;opacity:1}
+.screen-es-map .esMapOps{left:22.5%;top:11.5%;width:25%;height:46%;overflow-y:auto;scrollbar-width:thin}
+.screen-es-map .esMapOps .row{padding:6px 0}
+.screen-es-map .esMapOps h3{font-size:clamp(13px,1.1vw,17px);line-height:1.25;margin:0 0 4px}
+.screen-es-map .esMapOps .tag{font-size:11px;line-height:1.3;color:#e4eff8}
+.screen-es-map .esMapOps .row:first-of-type{border-left:3px solid #4cd7f6;padding-left:8px;background:#102a40}
+.screen-es-map .esMapCond{top:11.5%;right:2%;width:25%;height:70%;overflow-y:auto;scrollbar-width:thin;background:#07182b;padding:1.25%}
+.screen-es-map .esMapCond small{font-size:12px;line-height:1.45;color:#74e4ff}
+.screen-es-map .esMapCond .metric{padding:7px 0}
+.screen-es-map .esMapCond p{font-size:clamp(12px,1vw,14px);line-height:1.5;color:#dcebf4;overflow-wrap:anywhere}
+.screen-es-map .esMapCond strong{font-size:clamp(12px,1vw,15px);line-height:1.45;color:#fff}
+.screen-es-map .esMapCond .metric b{font-size:clamp(15px,1.35vw,21px)}
+.screen-es-map .esMapCond .warn{padding:11px;margin:12px 0;background:#32192f;border:2px solid #f5a0f5;border-left:5px solid #ffd0fc;box-shadow:0 0 24px rgba(245,160,245,.18)}
+.screen-es-map .esMapCond .warn strong{font-size:clamp(13px,1.1vw,16px);color:#ffe5ff;display:block}
+.screen-es-map .esMapCond .warn p{color:#ffe5fc;font-size:clamp(12px,1vw,14px)}
+.screen-es-map .esNextStep{margin-top:12px;padding:10px;background:#153347;border-left:3px solid #4cd7f6}
+.screen-es-map .esNextStep strong{color:#83e9ff}
+.screen-es-map .esMapTimeline{left:22.5%;right:2%;bottom:2%;height:15%;background:#07182b;overflow:hidden}
+.screen-es-map .esMapTimeline small{font-size:12px;color:#72def4}
+.screen-es-map .esMapTimeline .bar{height:7px}
+.screen-es-map .guide-focus{background:rgba(245,160,245,.06);border:3px solid #ffe3ff;box-shadow:0 0 0 2px rgba(245,160,245,.45),0 0 20px rgba(245,160,245,.55);animation:none}
+.screen-es-map .guide-hint{font:800 13px/1.45 ui-monospace,Consolas,monospace;max-width:265px;z-index:16}
+
 </style>
 </head>
 <body>
@@ -594,10 +619,32 @@ function addSpanishStartCover(shell){
 
 function addSpanishStaticUi(shell,name){
   if(new URLSearchParams(location.search).get('hubLang')!=='es'||name==='start')return;
+  if(name==='map1'||name==='ground1')shell.classList.add('screen-es-map');
   const layer=document.createElement('div');layer.className='esStaticUi';
   layer.innerHTML=`<div class="esStaticTop">CONTROL DE MISIÓN</div><aside class="esStaticSide"><div class="op">OPERATIVO_01</div><div class="rank">RANGO: COMANDANTE</div><nav><div>▧ MAPA</div><div>▤ BRIEFING</div><div>▥ INFORMACIÓN</div><div>♜ LOGROS</div></nav><div class="deploy">DESPLEGAR EQUIPO</div></aside>`;
   if(name==='map1'||name==='ground1'){
-    layer.insertAdjacentHTML('beforeend',`<section class="esPanel esMapOps"><small>OPERACIONES DISPONIBLES</small><div class="row"><h3>PRUEBA EN TIERRA</h3><span class="tag">RUIDO ALTO</span><span class="tag">45 MIN</span></div><div class="row"><h3>PRUEBA ESTÁTICA</h3><span class="tag">RUIDO MEDIO</span><span class="tag">120 MIN</span></div><div class="row"><h3>COMPROBACIÓN DE RODAJE</h3><span class="tag">RUIDO BAJO</span><span class="tag">15 MIN</span></div></section><section class="esPanel esMapCond"><small>CONDICIONES ACTIVAS · EN DIRECTO</small><div class="metric"><p>VELOCIDAD DEL VIENTO</p><b>24 KTS / SW</b></div><div class="metric"><p>NIVEL dB · SECTOR 7</p><b>${name==='ground1'?'94,2':'88,5'} dB(A)</b></div><div class="metric"><p>PRESIÓN SOBRE HÁBITAT</p><strong>ELEVADA</strong></div><div class="warn"><strong>⚠ CONFLICTO DE RUIDO DETECTADO</strong><p>La prueba de motor afecta a receptores comunitarios y al corredor de hábitat.</p></div><p><strong>APRENDIZAJE DE SOSTENIBILIDAD</strong><br>La exposición cambia con viento, momento y ubicación.</p></section><section class="esPanel esMapTimeline"><small>CRONOLOGÍA TÁCTICA · 06:00–24:00</small><div class="bar"></div></section>`);
+    const nextStep=name==='map1'
+      ? 'Selecciona PRUEBA EN TIERRA para revisar el conflicto y comparar las opciones.'
+      : 'Compara ejecutar la prueba ahora, retrasarla treinta minutos o cambiar la zona antes de desplegar el equipo.';
+    layer.insertAdjacentHTML('beforeend',`
+      <section class="esPanel esMapOps">
+        <small>OPERACIONES DISPONIBLES</small>
+        <div class="row"><h3>PRUEBA EN TIERRA</h3><span class="tag">RUIDO ALTO</span><span class="tag">45 MIN</span></div>
+        <div class="row"><h3>PRUEBA ESTÁTICA</h3><span class="tag">RUIDO MEDIO</span><span class="tag">120 MIN</span></div>
+        <div class="row"><h3>COMPROBACIÓN DE RODAJE</h3><span class="tag">RUIDO BAJO</span><span class="tag">15 MIN</span></div>
+      </section>
+      <section class="esPanel esMapCond">
+        <small>CONDICIONES ACTIVAS · EN DIRECTO</small>
+        <div class="metric"><p>VELOCIDAD DEL VIENTO</p><b>24 KTS / SW</b></div>
+        <div class="metric"><p>NIVEL DE RUIDO · SECTOR 7</p><b>${name==='ground1'?'94,2':'88,5'} dB(A)</b></div>
+        <div class="metric"><p>PRESIÓN SOBRE EL HÁBITAT</p><strong>ELEVADA</strong></div>
+        <div class="warn"><strong>⚠ CONFLICTO DE RUIDO DETECTADO</strong><p>La prueba de motor puede aumentar las molestias en la zona residencial y alterar el corredor del humedal.</p></div>
+        <p><strong>APRENDIZAJE DE SOSTENIBILIDAD</strong></p>
+        <p>La exposición al ruido cambia según el viento, la hora y el lugar de ejecución.</p>
+        <div class="esNextStep"><strong>QUÉ HACER AHORA</strong><p>${nextStep}</p></div>
+      </section>
+      <section class="esPanel esMapTimeline"><small>CRONOLOGÍA TÁCTICA · 06:00–24:00</small><div class="bar"></div></section>
+    `);
   }
   if(name.startsWith('complete')){
     layer.insertAdjacentHTML('beforeend',`<section class="esPanel esCompleteMain"><div class="post">INFORME POSTERIOR A LA ACCIÓN GENERADO</div><h2>MISIÓN COMPLETADA</h2><h3>VENTANA OPERACIONAL PRESERVADA</h3><div class="esCompleteMetrics"><div class="esCompleteMetric"><strong>90%</strong><span>DISPONIBILIDAD OPERATIVA</span></div><div class="esCompleteMetric"><strong>ÓPTIMA</strong><span>EXPOSICIÓN AL RUIDO</span></div><div class="esCompleteMetric"><strong>95%</strong><span>INTERACCIÓN CON HÁBITAT</span></div><div class="esCompleteMetric"><strong>CERO</strong><span>IMPACTO COMUNITARIO</span></div></div><div class="esCompleteInsight"><small>APRENDIZAJE DE SOSTENIBILIDAD</small><p>La decisión operacional debe considerar cómo el viento, el horario y la ubicación modifican la exposición real.</p></div><div class="esCompleteNext">SIGUIENTE OPERACIÓN →</div></section>`);
