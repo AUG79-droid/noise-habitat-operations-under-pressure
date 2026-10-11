@@ -148,6 +148,11 @@
       const meaning=panel.querySelector('.meaning');if(meaning)meaning.textContent='En otras palabras: '+info.meaning;
       const watch=panel.querySelector('.watch');if(watch)watch.textContent='ATENCIÓN: '+info.watch;
       const label=stage.querySelector('.route-label');if(label)label.textContent='RUTA '+key.toUpperCase()+' · '+info.name.toUpperCase();
+      setText(panel,'.ey','RUTA '+key.toUpperCase()+' · ¿QUÉ OCURRE?');
+      setText(stage,'#m2Intel','¿QUÉ ESTOY VIENDO?');
+      setText(stage,'#m2Prev','← RUTA ANTERIOR');
+      setText(stage,'#m2Next',routeReviewIndex2<2?'SIGUIENTE RUTA →':'COMPARAR A · B · C');
+
     },
     3(){
       const stage=document.querySelector('.readableMission'),p=stage?.querySelector('.m3-status');
@@ -175,6 +180,15 @@
       setText(p,'.meaning','En otras palabras: '+info.meaning);
       setText(stage,'.m4-clock .label',info.name.toUpperCase());
       stage.querySelectorAll('.m4-window').forEach((e,i)=>{setText(e,'small','FRANJA '+String.fromCharCode(65+i));setText(e,'span',['TEMPRANA','INTERMEDIA','TARDÍA'][i]);});
+      setText(stage,'#m4Intel','¿QUÉ ESTOY VIENDO?');
+      setText(stage,'#m4Prev','← FRANJA ANTERIOR');
+      setText(stage,'#m4Next',windowStep4<2?'MOSTRAR SIGUIENTE FRANJA →':'COMPARAR 3 FRANJAS');
+      const margin=stage.querySelector('.m4-receptor .signal');
+      stage.querySelectorAll('.m4-receptor .signal').forEach(e=>{
+        const tr={'WIDE':'AMPLIO','GOOD':'ADECUADO','TIGHT':'AJUSTADO','HIGH':'ALTA','LOW':'BAJA','VERY HIGH':'MUY ALTA','MODERATE':'MODERADA'};
+        if(tr[e.textContent.trim()])e.textContent=tr[e.textContent.trim()];
+      });
+
     },
     5(){
       const stage=document.querySelector('.readableMission'),p=stage?.querySelector('.m5-status'),file=stage?.querySelector('.m5-file');
@@ -186,6 +200,10 @@
       setText(file,'.m5-detail',info.detail);setText(file,'.m5-tells strong',info.plain);
       stage.querySelectorAll('.m5-evidence-btn').forEach((btn,i)=>{setText(btn,'strong',evidenceES[i].title);setText(btn,'span',evidenceES[i].short)});
       setText(p,'.plain','La queja desencadena la investigación. ¿Por qué la exposición real al ruido de la zona residencial fue mayor que la prevista?');
+      setText(stage,'#m5Intel','¿CÓMO INTERPRETO ESTO?');
+      setText(stage,'#m5Prev','← EVIDENCIA ANTERIOR');
+      setText(stage,'#m5Next',evidenceStep5<3?'MOSTRAR SIGUIENTE EVIDENCIA →':'FORMULAR CONCLUSIÓN');
+
     },
     6(){
       const stage=document.querySelector('.readableMission'),panel=stage?.querySelector('.m6-panel'),file=stage?.querySelector('.m6-file');
@@ -211,6 +229,10 @@
       if(status)status.textContent=badges[status.textContent.trim()]||status.textContent;
       stage.querySelectorAll('.m6-file-btn').forEach((btn,i)=>{setText(btn,'small','EXPEDIENTE '+String(i+1).padStart(2,'0'));setText(btn,'strong',auditsES[i].title);setText(btn,'span',auditsES[i].short)});
       setText(panel,'h3','Reúne las evidencias');
+      setText(stage,'#m6Intel','¿QUÉ BUSCA EL AUDITOR?');
+      setText(stage,'#m6Prev','← EXPEDIENTE ANTERIOR');
+      setText(stage,'#m6Next',auditStep6<4?'ABRIR SIGUIENTE EXPEDIENTE →':'PREPARAR CONCLUSIÓN');
+
     }
   };
   function translateStage(root,mission){
