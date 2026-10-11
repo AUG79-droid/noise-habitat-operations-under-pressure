@@ -441,6 +441,7 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .m6-summary span{font-size:12px;line-height:1.5}
 
 </style>
+<link rel="stylesheet" href="accessible-missions.css">
 </head>
 <body>
 <nav class="appNav" id="appNav" aria-label="Mission navigation"><div class="appNavTitle" id="appNavTitle">Noise & Habitat · Mission 01</div><div class="appNavActions"><button id="navBack" class="navBtn" type="button">← Back</button><button id="navRestart" class="navBtn" type="button">↻ Restart</button><button id="navHome" class="navBtn" type="button">⌂ Home</button><button id="helpBtn" class="helpBtn" type="button" aria-label="How to play" title="How to play">? Help</button></div></nav>
@@ -883,15 +884,15 @@ function render(name){
  if(name==='map1'){addSidebarHits(shell,s,1);addHit(shell,ariaSpanishSelected?'Prueba en tierra GR-774A':'Ground Run GR-774A',ariaSpanishSelected?shellTargetRect(shell,'.esMapOps .row:first-of-type',rectPct(286,151,316,112,s.w,s.h)):rectPct(286,151,316,112,s.w,s.h),()=>{guideSteps.ground1=0;guideOpen=true;render('ground1')});addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('FIRST SELECT GROUND RUN GR-774A'));addAvatarGuide(shell,'map1',s)}
  if(name==='ground1'){addSidebarHits(shell,s,1);addHit(shell,ariaSpanishSelected?'Desplegar equipo':'Deploy squad',ariaSpanishSelected?shellTargetRect(shell,'.esStaticSide .deploy',rectPct(30,1200,259,50,s.w,s.h)):rectPct(30,1200,259,50,s.w,s.h),openDecision1);addAvatarGuide(shell,'ground1',s)}
  if(name==='complete1'){addSidebarHits(shell,s,1);addTheoryLaunch(shell,s,1);if(selectedChoice1){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 01 control</small><strong>${choices1[selectedChoice1].title}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete1',s)}
- if(name==='map2'){addSidebarHits(shell,s,2);addMission2Map(shell,s);addAvatarGuide(shell,'map2',s)}
+ if(name==='map2'){addSidebarHits(shell,s,2);addMission2Map(shell,s);if(window.buildReadableMission)window.buildReadableMission(shell,2);addAvatarGuide(shell,'map2',s)}
  if(name==='complete2'){addSidebarHits(shell,s,2);addTheoryLaunch(shell,s,2);if(selectedRoute2){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 02 route</small><strong>${routes2[selectedRoute2].code} · ${routes2[selectedRoute2].name}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete2',s)}
- if(name==='map3'){addSidebarHits(shell,s,3);addMission3Map(shell,s);addAvatarGuide(shell,'map3',s)}
+ if(name==='map3'){addSidebarHits(shell,s,3);addMission3Map(shell,s);if(window.buildReadableMission)window.buildReadableMission(shell,3);addAvatarGuide(shell,'map3',s)}
  if(name==='complete3'){addSidebarHits(shell,s,3);addTheoryLaunch(shell,s,3);if(selectedResponse3){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 03 response</small><strong>${responses3[selectedResponse3].name}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete3',s)}
- if(name==='map4'){addSidebarHits(shell,s,4);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('USE THE TIME-WINDOW PANEL · REVIEW ALL 3 WINDOWS FIRST'));addMission4Map(shell,s);addAvatarGuide(shell,'map4',s)}
+ if(name==='map4'){addSidebarHits(shell,s,4);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('USE THE TIME-WINDOW PANEL · REVIEW ALL 3 WINDOWS FIRST'));addMission4Map(shell,s);if(window.buildReadableMission)window.buildReadableMission(shell,4);addAvatarGuide(shell,'map4',s)}
  if(name==='complete4'){addSidebarHits(shell,s,4);addTheoryLaunch(shell,s,4);if(selectedWindow4){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 04 window</small><strong>${windows4[selectedWindow4].time} · ${windows4[selectedWindow4].name}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete4',s)}
- if(name==='map5'){addSidebarHits(shell,s,5);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('THIS MISSION IS AN INVESTIGATION · REVIEW THE EVIDENCE PANEL'));addMission5Map(shell,s);addAvatarGuide(shell,'map5',s)}
+ if(name==='map5'){addSidebarHits(shell,s,5);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('THIS MISSION IS AN INVESTIGATION · REVIEW THE EVIDENCE PANEL'));addMission5Map(shell,s);if(window.buildReadableMission)window.buildReadableMission(shell,5);addAvatarGuide(shell,'map5',s)}
  if(name==='complete5'){addSidebarHits(shell,s,5);addTheoryLaunch(shell,s,5);if(selectedAction5){const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Mission 05 corrective action</small><strong>${actions5[selectedAction5].name}</strong>`;shell.appendChild(t)}addAvatarGuide(shell,'complete5',s)}
- if(name==='map6'){addSidebarHits(shell,s,6);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('FINAL AUDIT · REVIEW THE AUDIT FILES'));addMission6Map(shell,s);addAvatarGuide(shell,'map6',s)}
+ if(name==='map6'){addSidebarHits(shell,s,6);addHit(shell,'Deploy squad',rectPct(24,756,206,38,s.w,s.h),()=>showToast('FINAL AUDIT · REVIEW THE AUDIT FILES'));addMission6Map(shell,s);if(window.buildReadableMission)window.buildReadableMission(shell,6);addAvatarGuide(shell,'map6',s)}
  if(name==='complete6'){addSidebarHits(shell,s,6);addHit(shell,'Campaign rewards',rectPct(616,818,304,58,s.w,s.h),()=>openRewardsPanel(6));const t=document.createElement('div');t.className='resultTag';t.innerHTML=`<small>Final audit</small><strong>CAMPAIGN COMPLETE</strong>`;shell.appendChild(t);addAvatarGuide(shell,'complete6',s)}
 }
 
@@ -1084,5 +1085,6 @@ function openModal(){modalCard.scrollTop=0;modalLayer.classList.add('open')}func
 function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),2400)}
 let resizeRAF=0;addEventListener('resize',()=>{cancelAnimationFrame(resizeRAF);resizeRAF=requestAnimationFrame(()=>render(current))});addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});render('start');
 </script>
+<script src="accessible-missions.js"></script>
 <script src="localization.js"></script>
 </body></html>
