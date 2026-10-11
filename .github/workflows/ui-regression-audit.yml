@@ -1,0 +1,87 @@
+name: UI Regression Audit (EN and ES)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - index.html
+      - localization.js
+      - .github/workflows/ui-regression-audit.yml
+jobs:
+  inspect-all-screens:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chromium
+      - name: Exercise every screen in both languages
+        run: |
+          python3 -m http.server 8080 >/tmp/nh-server.log 2>&1 &
+          node <<'NODE'
+          const { chromium }=require('playwright');
+          const fs=require('fs');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+            const screenNames=['start','campaignIntro','map1','ground1','complete1','theory1','map2','complete2','theory2','map3','complete3','theory3','map4','complete4','theory4','map5','complete5','theory5','map6','complete6','theory6'];
+            const records=[]; const errors=[];
+            for(const locale of ['es','en']){
+              for(const size of [{w:1440,h:900,label:'desktop'},{w:390,h:844,label:'mobile'}]){
+                const page=await browser.newPage({viewport:{width:size.w,height:size.h},deviceScaleFactor:1});
+                page.on('pageerror',e=>errors.push(locale+'/'+size.label+' SCRIPT '+e.message));
+                await page.goto('http://127.0.0.1:8080/?hubLang='+locale,{waitUntil:'load'});
+                await page.waitForTimeout(350);
+                for(const screen of screenNames){
+                  const info=await page.evaluate((screen)=>{
+                    guideOpen=false;
+                    if(screen==='ground1')guideSteps.ground1=0;
+                    render(screen);
+                    return {current:current,loaded:!!document.querySelector('.screen')||!!document.querySelector('.coursePage')};
+                  },screen);
+                  await page.waitForTimeout(160);
+                  const result=await page.evaluate((screen)=>{
+                    const $=sel=>document.querySelector(sel),all=sel=>[...document.querySelectorAll(sel)];
+                    const box=el=>{const r=el.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}};
+                    const screenEl=$('.screen'),pageEl=$('.coursePage'),done=$('.completionScreen');
+                    const a={screen,current,completion:!!done,course:!!pageEl,hasScreen:!!screenEl};
+                    if(done){a.heading=$('.completionHeading')?.textContent;a.cta=$('.completionButton')?.textContent;a.duplicateOld=!!$('.esCompleteMain');a.cardCount=all('.completionCard').length;
+                      a.cardOverflow=all('.completionCard').filter(x=>x.scrollWidth>x.clientWidth+4).length}
+                    if(screen==='map1'&&location.search.includes('hubLang=es')){
+                      a.timelineHours=all('.esTimelineTimes span').map(e=>e.textContent);a.warn=!!$('.esMapCond .warn');
+                      a.warnColor=$('.esMapCond .warn')?getComputedStyle($('.esMapCond .warn')).backgroundColor:'';
+                    }
+                    if(screen==='campaignIntro'||screen.startsWith('theory'))a.heading=pageEl?.querySelector('h1')?.textContent;
+                    const controls=all('.completionButton,.courseBtn,.guide-action').filter(x=>box(x).w&&box(x).h);
+                    a.tinyButtons=controls.filter(el=>parseFloat(getComputedStyle(el).fontSize)<12).length;
+                    return a;
+                  },screen);
+                  result.language=locale;result.viewport=size.label;
+                  records.push(result);
+                  if(!info.loaded||!result.hasScreen&&!result.course)errors.push(locale+'/'+size.label+'/'+screen+' failed to render');
+                  if(screen.startsWith('complete')&&(!result.completion||result.duplicateOld||result.cardCount!==2))errors.push(locale+'/'+size.label+'/'+screen+' completion invalid '+JSON.stringify(result));
+                  if(screen==='map1'&&locale==='es'&&result.timelineHours?.length!==7)errors.push(locale+'/'+size.label+'/map1 missing timeline');
+                  if(result.tinyButtons>0)errors.push(locale+'/'+size.label+'/'+screen+' tiny buttons '+result.tinyButtons);
+                  if(size.label==='desktop')await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'}).catch(async()=>{fs.mkdirSync('screens',{recursive:true});await page.screenshot({path:'screens/'+locale+'-'+screen+'.png'});});
+                }
+                await page.close();
+              }
+            }
+            await browser.close();
+            fs.writeFileSync('ui-audit.json',JSON.stringify({screenCount:records.length,results:records,errors},null,2));
+            console.log('UI_AUDIT_RESULT='+JSON.stringify({screenCount:records.length,errors,screenNames}));
+            if(errors.length)process.exitCode=1;
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          NODE
+      - name: Upload audit screenshots and JSON
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: noise-habitat-screen-audit
+          path: |
+            screens/
+            ui-audit.json
+          if-no-files-found: warn
