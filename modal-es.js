@@ -114,9 +114,121 @@ function decision(root){
  badges(root);
  return true;
 }
+
+const spanishBriefings={
+ 1:{title:'La prueba de motor es obligatoria. Debes evitar molestias innecesarias.',lead:'La prueba debe realizarse. Tu decisión consiste en elegir cómo ejecutarla teniendo en cuenta las condiciones del entorno.',core:[
+  ['TU FUNCIÓN','Planificar operaciones en servicio','Debes mantener la disponibilidad operativa.'],
+  ['QUÉ DEBE HACERSE','Realizar la prueba de motor','No se puede cancelar la operación.'],
+  ['QUÉ DEBES EQUILIBRAR','Disponibilidad y molestias','Considera tanto a los vecinos como al hábitat.']
+ ],rule:'Elige la prueba de motor, compara las tres formas de ejecutarla y decide qué medida permite realizarla con menos molestias evitables.',
+ steps:[['Selecciona la operación','Comprueba qué prueba es obligatoria.'],['Compara tres opciones','Evalúa ejecutar ahora, retrasar o trasladar.'],['Decide el control','Elige una alternativa y revisa sus consecuencias.']]},
+ 2:{title:'Un vuelo obligatorio. Tres rutas posibles.',lead:'Debes realizar un vuelo de entrenamiento ficticio. La decisión consiste en elegir la ruta. Las tres permiten completar la misión, pero generan molestias en zonas diferentes.',core:[
+  ['QUÉ DEBE HACERSE','Realizar el vuelo de entrenamiento','No puedes cancelarlo.'],
+  ['QUÉ PUEDES CAMBIAR','La ruta','A, B o C.'],
+  ['QUÉ QUIERES EVITAR','Molestias innecesarias','Considera las viviendas, el humedal y el corredor de aves.']
+ ],rule:'Verás primero la ruta A, después la B y finalmente la C. Lee qué protege y a quién afecta cada ruta. Al terminar podrás compararlas y elegir.',
+ steps:[['Observa la ruta A','¿Dónde aumenta la exposición?'],['Continúa con la ruta B','¿Se traslada el problema a otro lugar?'],['Revisa la ruta C','¿Qué equilibrio propone?'],['Compara y decide','Elige una opción y justifícala.']]},
+ 3:{title:'El plan está aprobado, pero las condiciones ambientales cambian.',lead:'Una actividad ficticia ya está programada. El seguimiento ambiental detecta un aumento temporal de movimientos de fauna cerca del corredor previsto.',core:[
+  ['QUÉ DEBE HACERSE','Realizar la actividad','La actividad sigue siendo necesaria.'],
+  ['QUÉ CAMBIA','Las condiciones de fauna','La nueva información puede modificar el riesgo.'],
+  ['QUÉ DEBES DECIDIR','Adaptar o mantener el plan','Compara las respuestas posibles.']
+ ],rule:'Revisa el plan aprobado, consulta la alerta y comprueba si existe un conflicto. Después decide si debes adaptar la respuesta operativa.',
+ steps:[['Consulta el plan','Identifica las condiciones iniciales.'],['Examina la alerta','Comprueba qué ha cambiado.'],['Comprueba el conflicto','Decide si el plan debe adaptarse.']]},
+ 4:{title:'La misma actividad obligatoria en distintas franjas horarias.',lead:'Una validación ficticia de 40 minutos debe completarse antes del relevo de las 00:30. Puedes cambiar cuándo se ejecuta, pero no cancelar la actividad.',core:[
+  ['QUÉ DEBE HACERSE','Completar la validación nocturna','Cumple el requisito operativo.'],
+  ['QUÉ PUEDES CAMBIAR','El horario','Compara tres franjas.'],
+  ['QUÉ CAMBIA CON EL TIEMPO','Sensibilidad y margen','La exposición y el margen operativo dependen de la hora.']
+ ],rule:'Revisa las tres franjas una a una y compara la disponibilidad operativa con la sensibilidad de la población y la actividad de fauna.',
+ steps:[['Revisa la franja A','Consulta sus condiciones.'],['Observa B y C','Comprueba qué cambia con el horario.'],['Compara los horarios','Elige la opción mejor justificada.']]},
+ 5:{title:'Una actividad obligatoria produjo más ruido del previsto. Averigua por qué.',lead:'Después de una validación nocturna ficticia, a las 22:18 se registra una queja de los vecinos. Debes reconstruir por qué aumentó la exposición real al ruido.',core:[
+  ['QUÉ SE HA OBSERVADO','Mayor exposición al ruido','La queja y el indicador acústico desencadenan la investigación.'],
+  ['QUÉ HAY QUE EXPLICAR','Diferencia entre lo previsto y lo real','Comprueba el viento, la hora efectiva y el control final.'],
+  ['QUÉ DEBES MEJORAR','El control operacional del ruido','Reduce la repetición del problema sin impedir la actividad obligatoria.']
+ ],rule:'Revisa cuatro evidencias: registro acústico, meteorología, horario efectivo y comprobación final. Después identifica el fallo y elige una acción correctiva.',
+ steps:[['Examina el registro de ruido','¿Qué cambió en la zona residencial?'],['Comprueba la propagación','¿Cambió el viento?'],['Revisa la hora real','¿Se ejecutó cuando estaba previsto?'],['Revisa el control final','¿Se comprobaron las condiciones antes de empezar?']]},
+ 6:{title:'¿Puedes demostrar que los controles ambientales funcionaron?',lead:'Esta es la misión final. No se trata de memorizar apartados de ISO 14001, sino de demostrar con evidencias cómo se planificaron, aplicaron, supervisaron y mejoraron los controles.',core:[
+  ['QUÉ REVISARÁS','Cinco expedientes de evidencia','Recogen decisiones anteriores y sus resultados.'],
+  ['QUÉ NECESITA EL AUDITOR','Decisiones trazables','Debe ser posible justificar los controles.'],
+  ['QUÉ HACER CON LOS FALLOS','Registrar y dar seguimiento','Las deficiencias deben quedar visibles y corregirse.']
+ ],rule:'Revisa los cinco expedientes, reconoce las evidencias incompletas y formula una conclusión que distinga los controles efectivos de los puntos que requieren seguimiento.',
+ steps:[['Revisa las evidencias','Lee los registros de cada misión.'],['Evalúa los cambios','Comprueba adaptación y acciones correctivas.'],['Prepara la conclusión','Basándote en datos, no en impresiones.']]}
+};
+const spanishIntel={
+ 1:{title:'Comprueba las condiciones antes de decidir',lead:'Necesitas interpretar cuatro señales: viento, nivel relativo de ruido, sensibilidad del hábitat y conflicto con el plan.',facts:[
+  ['VIENTO','24 nudos · suroeste','El viento puede aumentar la exposición acústica a sotavento.'],
+  ['NIVEL DE RUIDO','88,5–94,2 dB(A) · datos ficticios','Son señales comparativas del juego, no límites legales.'],
+  ['SENSIBILIDAD DEL HÁBITAT','Elevada','La actividad puede afectar a zonas sensibles.'],
+  ['CONFLICTO DE RUIDO','Detectado','La exposición prevista requiere revisar el plan.']
+ ],bottom:'La pregunta es cómo realizar la operación requerida controlando las molestias evitables.'},
+ 2:{title:'Solo necesitas comprender cuatro aspectos',lead:'No necesitas dominar la planificación aérea. Debes observar hacia dónde desplaza las molestias cada ruta.',facts:[
+  ['POBLACIÓN','Personas que viven cerca de la ruta','Una mayor exposición puede provocar más molestias o quejas.'],
+  ['HUMEDAL','Hábitat sensible','Alejarse de las viviendas no siempre mejora la situación si se afecta al humedal.'],
+  ['CORREDOR DE AVES','Actividad estacional de fauna','También debe tenerse en cuenta al comparar las rutas.'],
+  ['DISPONIBILIDAD','Margen operativo','Una ruta más larga puede consumir más tiempo sin impedir la misión.']
+ ],bottom:'¿Qué ruta completa la operación necesaria y evita mejor las molestias innecesarias en conjunto?'},
+ 3:{title:'Una alerta en directo indica que ha cambiado el contexto',lead:'La pregunta es si el plan original sigue siendo adecuado después de recibir nueva información.',facts:[
+  ['PLAN APROBADO','Decisión basada en datos anteriores','La aprobación no garantiza que las condiciones permanezcan iguales.'],
+  ['ACTIVIDAD DE FAUNA','Aumento temporal de movimientos','Puede surgir un nuevo conflicto durante la actividad.'],
+  ['SEÑAL PARA ACTUAR','Se activa el solapamiento','Hay que comprobar si el plan coincide con la nueva zona sensible.'],
+  ['CONTROL ADAPTATIVO','Cambiar la respuesta cuando cambian las condiciones','La supervisión debe servir para tomar decisiones.']
+ ],bottom:'Una alerta debe provocar una evaluación y, cuando proceda, una adaptación del control operacional.'},
+ 4:{title:'La sensibilidad nocturna cambia con el horario',lead:'En este escenario ficticio solo necesitas comparar tres indicadores relativos.',facts:[
+  ['SENSIBILIDAD DE LOS VECINOS','Cuánto afecta una actividad en cada franja','No todas las horas producen las mismas molestias.'],
+  ['ACTIVIDAD DEL HÁBITAT','Nivel de actividad de la fauna','También varía durante la noche.'],
+  ['MARGEN OPERATIVO','Tiempo disponible antes del relevo','Un retraso puede reducir la capacidad de recuperación.'],
+  ['CONTROL DEL HORARIO','Elegir cuándo, no si se realiza la operación','El objetivo es cumplir la misión con menos molestias evitables.']
+ ],bottom:'No hay un horario universalmente mejor: compara el conjunto de condiciones.'},
+ 5:{title:'Interpreta el cambio de exposición sin inventar un incumplimiento legal',lead:'Necesitas cuatro conceptos para investigar el episodio ficticio de ruido.',facts:[
+  ['INDICADOR ACÚSTICO','Muestra que ha cambiado la exposición','Los valores dB(A) permiten comparar el episodio, no establecer por sí solos una infracción.'],
+  ['PROPAGACIÓN','El viento determina hacia dónde llega el sonido','Una misma prueba puede generar exposiciones diferentes.'],
+  ['HORA REAL DE EJECUCIÓN','Importa cuándo se realiza la actividad','Un retraso puede coincidir con una franja más sensible.'],
+  ['CONTROL OPERACIONAL','El plan debe actualizarse a las condiciones reales','Comprobar antes de ejecutar reduce errores evitables.']
+ ],bottom:'La conclusión debe basarse en evidencias sobre la propagación, el horario y el control aplicado.'},
+ 6:{title:'El auditor busca una cadena de evidencias',lead:'En este escenario, revisa el sistema mediante cuatro preguntas sencillas.',facts:[
+  ['CONTROL','¿Qué estaba previsto hacer?','Debe existir un control definido.'],
+  ['APLICACIÓN','¿Qué se hizo realmente?','La evidencia debe documentar su ejecución.'],
+  ['CAMBIOS Y SEGUIMIENTO','¿Qué ocurrió al cambiar las condiciones?','Es necesario comprobar si se adaptó la respuesta.'],
+  ['MEJORA','¿Qué sucedió cuando falló un control?','La investigación y la acción correctiva deben quedar registradas.']
+ ],bottom:'Una auditoría fiable distingue los resultados demostrados de los aspectos pendientes.'}
+};
+function localizeSupporting(root){
+ const eyebrow=root.querySelector('.eyebrow')?.textContent?.trim()||'';
+ const match=eyebrow.match(/Mission\s+0?([1-6])/i);
+ const m=match?Number(match[1]):null;
+ if(!m)return false;
+ const brief=root.querySelectorAll('.coreCard').length>0;
+ const intel=root.querySelectorAll('.fact').length>0;
+ const data=brief?spanishBriefings[m]:intel?spanishIntel[m]:null;
+ if(!data)return false;
+ heading(root,'MISIÓN '+String(m).padStart(2,'0')+' · '+(brief?'PRESENTACIÓN':'INFORMACIÓN'),data.title,data.lead);
+ if(brief){
+  root.querySelectorAll('.coreCard').forEach((card,i)=>{
+    const v=data.core[i];if(!v)return;
+    set(card,'small',v[0]);set(card,'strong',v[1]);set(card,'span',v[2]);
+  });
+  set(root,'.ruleBox',data.rule);
+  root.querySelectorAll('.plainStep').forEach((step,i)=>{if(data.steps[i]){set(step,'strong',data.steps[i][0]);set(step,'span',data.steps[i][1])}});
+ }else{
+  root.querySelectorAll('.fact').forEach((fact,i)=>{
+   const v=data.facts[i];if(!v)return;
+   set(fact,'small',v[0]);set(fact,'strong',v[1]);set(fact,'em',v[2]);
+  });
+  set(root,'.intelExplain',data.bottom);
+ }
+ // The existing buttons retain all click handlers; replace labels only.
+ const buttons=root.querySelectorAll('.modalActions button');
+ buttons.forEach((btn,i)=>{
+   btn.textContent=brief
+    ? (i===buttons.length-1?'INICIAR MISIÓN':'VER EXPLICACIÓN')
+    : 'VOLVER A LA MISIÓN';
+ });
+ return true;
+}
+
 function localize(root){
  if(!es||!root)return;
  if(decision(root))return;
+ if(localizeSupporting(root))return;
  const mapTitles={
  'Mission 01 · Quick Intel':['MISIÓN 01 · INFORMACIÓN','La prueba de motor y sus condiciones'],
  'Mission 02 · Quick Intel':['MISIÓN 02 · INFORMACIÓN','Solo necesitas comprender tres aspectos'],
