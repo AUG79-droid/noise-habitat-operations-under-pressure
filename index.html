@@ -440,6 +440,26 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .m6-summary strong{font-size:13px;line-height:1.45}
 .m6-summary span{font-size:12px;line-height:1.5}
 
+
+/* Responsive modal card layout: three choices stay readable on desktop */
+@media(min-width:850px){
+ .modal .missionCore{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+ .modal .plainFlow{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+ .modal .modalGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+.modal .coreCard{min-height:128px!important;padding:18px!important}
+.modal .coreCard small{font-size:13px!important;line-height:1.45!important}
+.modal .coreCard strong{font-size:17px!important;line-height:1.4!important}
+.modal .coreCard span{font-size:15px!important;line-height:1.55!important}
+.modal .plainStep{padding:18px 15px 16px 54px!important;min-height:108px!important}
+.modal .plainStep strong{font-size:16px!important;line-height:1.45!important}
+.modal .plainStep span{font-size:14px!important;line-height:1.5!important}
+.modal .plainStep b{left:15px;top:16px;width:28px;height:28px;font-size:13px}
+@media(max-width:849px){
+ .modal .missionCore,.modal .plainFlow,.modal .modalGrid{grid-template-columns:1fr!important}
+ .modal .coreCard,.modal .plainStep{min-height:0!important}
+}
+
 </style>
 <link rel="stylesheet" href="accessible-missions.css">
 </head>
