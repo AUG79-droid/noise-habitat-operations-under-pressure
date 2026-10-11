@@ -197,6 +197,61 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .startSpanishCover .esStat span{font-size:12px;letter-spacing:.06em}
 .startSpanishCover .esStartBtn{left:34%;width:32%;min-width:230px;height:58px;font-size:15px}
 }
+
+/* Readability pass v1 — shared by EN/ES, no mission logic changes */
+.modal{font-size:16px;line-height:1.6;max-height:88dvh;overflow-y:auto;overflow-x:hidden}
+.modal.wide{width:min(1180px,96vw)}
+.modal .eyebrow{font:800 13px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.08em}
+.modal h2{font-size:clamp(26px,2.2vw,34px);line-height:1.18}
+.modal .lead,.modal p{font-size:16px;line-height:1.6}
+.modal button,.modal .btn{font-size:15px;line-height:1.35;min-height:44px}
+.modal .choice{min-height:0;padding:18px}
+.modal .choice .code{font:800 12px/1.4 ui-monospace,Consolas,monospace}
+.modal .choice h3{font-size:19px;line-height:1.3}
+.modal .choice p{font-size:15px;line-height:1.55}
+.modal .choice .change{font-size:14px;line-height:1.55}
+.m2-compare-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.m2-compare-card{min-width:0;min-height:280px;padding:19px;gap:5px}
+.m2-compare-card small{font:900 12px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.05em;color:#b3c6d6}
+.m2-compare-card h3{font-size:20px;line-height:1.3;margin:6px 0}
+.m2-compare-card p{font-size:15px;line-height:1.55;color:#e2ebf3}
+.m2-compare-card .mini{gap:9px;margin-bottom:15px}
+.m2-compare-card .mini div{font:800 12px/1.45 ui-monospace,Consolas,monospace;color:#b5c9d8;align-items:start;flex-wrap:wrap}
+.m2-compare-card .mini strong{overflow-wrap:anywhere}
+.m2-compare-card button{font-size:15px;line-height:1.4;min-height:44px}
+.m2-compare-note,.m3-compare-note,.m4-compare-note{font-size:15px;line-height:1.55;color:#edf4fc}
+.m2-route-panel,.m3-status,.m4-panel{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.m2-route-panel .ey,.m3-status .ey,.m4-panel .ey{font:900 11px/1.4 ui-monospace,Consolas,monospace}
+.m2-route-panel .plain,.m3-status .plain,.m4-panel .plain{font-size:13px;line-height:1.5}
+.m2-route-panel .watch{font:900 11px/1.4 ui-monospace,Consolas,monospace}
+.m2-route-panel .meaning,.m3-status .meaning,.m4-panel .meaning{font-size:12px;line-height:1.55}
+.m2-bottom-simple,.m3-timeline,.m4-bottom{overflow-y:auto;scrollbar-width:thin}
+.m2-bottom-copy small,.m3-timeline small{font:900 11px/1.4 ui-monospace,Consolas,monospace}
+.m2-bottom-copy strong{font-size:16px;line-height:1.35}
+.m2-bottom-copy span{font-size:13px;line-height:1.5}
+.m3-goal small,.m4-goal small,.m3-chip small,.m4-chip small{font:900 11px/1.4 ui-monospace,Consolas,monospace}
+.m3-goal span,.m4-goal span,.m3-status .do-now strong{font-size:13px;line-height:1.5}
+.m3-kpi small,.m4-metric small{font:800 11px/1.4 ui-monospace,Consolas,monospace}
+.m3-kpi strong,.m4-metric strong{font-size:13px;line-height:1.4}
+.m3-event b,.m4-window small{font:900 10px/1.4 ui-monospace,Consolas,monospace}
+.m3-event strong,.m4-window strong{font-size:13px}
+.m3-event span,.m4-window span{font-size:11px;line-height:1.4}
+.m3-btn,.m4-actions .m4-btn{font:900 11px/1.35 ui-monospace,Consolas,monospace}
+.guide-meta{font:900 11px/1.3 ui-monospace,Consolas,monospace}
+.guide-message{font-size:15px!important;line-height:1.5!important}
+.guide-action{font:900 12px/1.2 ui-monospace,Consolas,monospace}
+@media(max-width:1000px){
+  .m2-compare-grid{grid-template-columns:1fr}
+  .m2-compare-card{min-height:0}
+}
+@media(max-width:760px){
+  .modal{padding:20px 16px}
+  .modal .lead,.modal p{font-size:16px}
+  .modal .eyebrow{font-size:12px}
+  .guide-message{font-size:14px!important}
+  .guide-action{font-size:11px}
+}
+
 </style>
 </head>
 <body>
