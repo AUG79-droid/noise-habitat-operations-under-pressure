@@ -405,6 +405,19 @@ linear-gradient(180deg,#081326 0%,#06101f 58%,#040b16 100%);color:#eef8ff;line-h
 .screen-es-map .esNextStep p{margin:2px 0;line-height:1.4;font-size:clamp(11px,.9vw,13px)}
 .screen-es-map .esMapCond .warn{margin:10px 0}
 
+
+/* Screen-scaled Spanish header and guide hints: preserve the raster hit geometry */
+.screen{container-type:inline-size}
+.esStaticTop{
+ font:900 italic clamp(14px,2.0cqw,27px)/1.15 system-ui,sans-serif;
+ letter-spacing:-.025em;white-space:nowrap;overflow:hidden;
+}
+.esStaticSide .deploy{font-size:clamp(10px,1.15cqw,14px);white-space:nowrap}
+.screen-es-map .guide-hint{max-width:230px;font:800 12px/1.45 ui-monospace,Consolas,monospace}
+@media(max-width:600px){
+ .screen-es-map .guide-hint{max-width:155px;font-size:10px}
+}
+
 </style>
 </head>
 <body>
@@ -628,7 +641,7 @@ function addGuideHint(shell,step,s,screenName,stepIndex){
   hint.className='guide-hint'+(step.hintSide==='right'?' arrow-right':'');
   hint.innerHTML=hintText;
   if(target){
-    let x=r.left>55?r.left-22:r.left+r.width+2;
+    let x=r.left>55?r.left-30:r.left+r.width+2;
     let y=r.top+Math.min(3,r.height/2);
     if(targetSelector==='.esMapTimeline'){x=33;y=r.top-11}
     if(targetSelector==='.esStaticSide .deploy'){x=23;y=r.top-8}
@@ -831,7 +844,7 @@ function addCompletionScreen(shell,mission){
  }
  const footer=document.createElement('div');footer.className='completionFooter';
  const note=document.createElement('span');note.className='completionFooterNote';
- note.textContent=isES?'Sin porcentajes genéricos no calculados en la misión.':'No generic percentages or uncalculated scores.';
+ note.textContent=isES?'Continúa con la clase teórica para relacionar esta decisión con el control ambiental.':'Continue with the theory class to connect this decision to environmental management.';
  const cta=document.createElement('button');cta.type='button';cta.className='completionButton';
  cta.textContent=isES?'ABRIR CLASE TEÓRICA →':'OPEN THEORY CLASS →';
  cta.onclick=()=>render('theory'+mission);
