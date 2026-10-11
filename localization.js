@@ -430,7 +430,7 @@
   function localise(root) {
     if (language !== "es") return;
     // Never machine-translate a component authored natively in Spanish.
-    const authored = element => !!element?.closest?.(".completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint,.readableMission");
+    const authored = element => !!element?.closest?.(".completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint,.readableMission,.modal");
     if (root.nodeType === Node.ELEMENT_NODE && authored(root)) return;
     root.querySelectorAll?.("p,h1,h2,h3").forEach(element => {
       if (authored(element)) return;
@@ -478,7 +478,7 @@
   if (language === "es") {
     new MutationObserver(records => records.forEach(record => record.addedNodes.forEach(node => {
       if (node.nodeType === Node.ELEMENT_NODE) localise(node);
-      else if (node.nodeType === Node.TEXT_NODE && node.parentElement && !node.parentElement.closest("script,style,noscript,.completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint,.readableMission")) node.nodeValue = translate(node.nodeValue);
+      else if (node.nodeType === Node.TEXT_NODE && node.parentElement && !node.parentElement.closest("script,style,noscript,.completionScreen,.esStaticUi,.startSpanishCover,.guide-message,.guide-hint,.readableMission,.modal")) node.nodeValue = translate(node.nodeValue);
     }))).observe(document.body, { childList: true, subtree: true });
   }
 })();
