@@ -145,3 +145,15 @@
  outline-offset:3px;
  box-shadow:0 0 24px rgba(255,208,128,.28)!important;
 }
+
+/* Header chip fixed intrinsic size: keep both title lines inside its border */
+.readableMission > :is(.m2-mission-chip,.m3-chip,.m4-chip,.m5-chip,.m6-chip){
+ min-height:68px!important;height:auto!important;align-items:center!important;
+ gap:14px!important;overflow:visible!important;line-height:1.35!important;
+}
+.readableMission > :is(.m2-mission-chip,.m3-chip,.m4-chip,.m5-chip,.m6-chip) strong{
+ font-size:19px!important;line-height:1.35!important;margin:0!important;flex:0 1 auto;min-width:0;text-align:right;
+}
+.readableMission > :is(.m2-mission-chip,.m3-chip,.m4-chip,.m5-chip,.m6-chip) small{
+ font-size:13px!important;line-height:1.35!important;margin:0!important;flex:0 1 auto;
+}
